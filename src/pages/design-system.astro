@@ -4,20 +4,21 @@ import EpisodeCard from "../components/EpisodeCard.astro";
 import FeaturedEpisode from "../components/FeaturedEpisode.astro";
 import HostStrip from "../components/HostStrip.astro";
 import Player from "../components/Player.astro";
+import StatsStrip from "../components/StatsStrip.astro";
 import SubscribeRow from "../components/SubscribeRow.astro";
 import Layout from "../layouts/Layout.astro";
 
 const colors = [
-	["--color-bg", "Background"],
-	["--color-surface", "Surface"],
-	["--color-border", "Border"],
-	["--color-fg", "Foreground"],
-	["--color-fg-muted", "Foreground muted"],
-	["--color-brand", "Brand"],
-	["--color-brand-strong", "Brand strong (fill only)"],
-	["--color-on-brand", "On-brand text"],
-	["--color-accent", "Accent"],
-	["--color-danger", "Danger"],
+	["--color-bg", "Background", "17.2:1 vs fg"],
+	["--color-surface", "Surface", "cards, ink bands"],
+	["--color-border", "Border", "dividers only"],
+	["--color-border-strong", "Border strong", "3.6:1 / 3.9:1 inputs"],
+	["--color-fg", "Foreground", "17.2:1"],
+	["--color-fg-muted", "Foreground muted", "8.2:1 / 7.0:1"],
+	["--color-ember", "Ember (brand)", "6.4:1 / 4.8:1"],
+	["--color-amber", "Amber (accent)", "9.6:1 / 5.5:1"],
+	["--color-on-ember", "On-ember text", "flips: 6.4:1 / 4.8:1"],
+	["--color-danger", "Danger", "8.6:1 / 6.1:1"],
 ];
 
 const sampleEpisode = {
@@ -26,61 +27,76 @@ const sampleEpisode = {
 		title: "A sample episode title for preview",
 		pubDate: "2026-08-01T00:00:00.000Z",
 		description: "This card is a token preview, not a real episode.",
-		itunes: { duration: "30:00" },
+		tags: ["Web Dev", "Business"],
+		itunes: { duration: "30:00", episode: 7 },
 	},
 } as any;
 ---
 
 <Layout title="Design system — Stuck Between Pixels" noindex>
-  <section class="mx-auto max-w-4xl px-4 py-16 md:px-6">
-    <h1 class="font-display text-3xl">Design system</h1>
-    <p class="mt-2 text-fg-muted">Live render of DESIGN.md's tokens.</p>
+  <section class="mx-auto max-w-5xl px-4 py-16 md:px-8">
+    <p class="kicker text-ember">Reference</p>
+    <h1 class="display mt-3 text-4xl md:text-6xl">Design system</h1>
+    <p class="mt-4 max-w-xl text-fg-muted">
+      Live render of DESIGN.md's tokens. Flip the theme in the header and confirm
+      every swatch and component below follows.
+    </p>
 
-    <h2 class="mt-12 font-display text-xl">Color</h2>
-    <div class="mt-4 grid grid-cols-2 gap-4 sm:grid-cols-5">
+    <h2 class="display-tight mt-16 text-2xl">Color</h2>
+    <div class="mt-6 grid grid-cols-2 gap-4 sm:grid-cols-5">
       {
-        colors.map(([token, label]) => (
+        colors.map(([token, label, note]) => (
           <div>
             <div
-              class="h-16 rounded-lg border border-border"
+              class="h-16 rounded-xl border border-border"
               style={`background-color: var(${token})`}
             />
-            <p class="mt-1 text-xs text-fg-muted">{label}</p>
-            <code class="text-xs">{token}</code>
+            <p class="mt-2 text-sm">{label}</p>
+            <code class="text-xs text-fg-muted">{token}</code>
+            <p class="mt-1 text-xs text-fg-muted">{note}</p>
           </div>
         ))
       }
     </div>
 
-    <h2 class="mt-12 font-display text-xl font-medium">Type</h2>
-    <div class="mt-4 space-y-2">
-      <p class="font-display text-3xl font-medium">Display 3xl / Fraunces</p>
-      <p class="font-display text-2xl italic">Display 2xl italic</p>
-      <p class="eyebrow text-fg-muted">Eyebrow / IBM Plex Mono</p>
-      <p class="text-base">Body base / Work Sans</p>
-      <p class="text-sm text-fg-muted">Body sm muted</p>
+    <div class="mt-8 rounded-xl border border-border bg-ember p-5">
+      <p class="kicker text-on-ember">Rule 1 — on an ember fill, use the on-ember token</p>
+      <p class="mt-2 text-sm text-on-ember">
+        This panel is an ember fill. The token <em>flips</em>: ink on dark (6.4:1),
+        bone on light (4.8:1) &mdash; because ember itself is bright on dark and dark
+        on light. Hardcoding either fails AA in the other scheme (ink on light-mode
+        ember is 3.8:1). Always <code>text-on-ember</code>, never <code>text-fg</code>.
+      </p>
     </div>
 
-    <h2 class="mt-12 font-display text-xl">Components</h2>
-    <div class="mt-4 grid gap-6 md:grid-cols-2">
-      <EpisodeCard entry={sampleEpisode} />
-      <Player />
+    <h2 class="display-tight mt-16 text-2xl">Type</h2>
+    <div class="mt-6 space-y-4">
+      <p class="display text-5xl">Display / Archivo Expanded 800</p>
+      <p class="display-tight text-3xl">Display tight / Archivo 800</p>
+      <p class="kicker text-fg-muted">Kicker / JetBrains Mono 600</p>
+      <p class="text-lg">Body large / Instrument Sans</p>
+      <p class="text-base">Body base / Instrument Sans</p>
+      <p class="text-sm text-fg-muted">Body small muted</p>
     </div>
+
+    <h2 class="display-tight mt-16 text-2xl">Stats strip</h2>
     <div class="mt-6">
+      <StatsStrip entries={[sampleEpisode, sampleEpisode, sampleEpisode]} />
+    </div>
+
+    <h2 class="display-tight mt-16 text-2xl">Components</h2>
+    <div class="mt-6">
+      <EpisodeCard entry={sampleEpisode} />
+    </div>
+    <div class="mt-8 grid gap-6 md:grid-cols-2">
+      <Player />
       <SubscribeRow />
     </div>
-    <div class="mt-6">
+    <div class="mt-8">
       <HostStrip />
     </div>
-    <div class="mt-6 rounded-2xl border border-border">
+    <div class="mt-12 rounded-2xl border border-border p-6">
       <FeaturedEpisode entry={sampleEpisode} />
     </div>
-
-    <h2 class="mt-12 font-display text-xl">Theme toggle</h2>
-    <p class="mt-2 text-sm text-fg-muted">
-      Use the sun/moon button in the header above to flip data-theme and confirm
-      every swatch and component here flips with it — no flash, no invisible
-      logo. Header component: src/components/Header.astro.
-    </p>
   </section>
 </Layout>

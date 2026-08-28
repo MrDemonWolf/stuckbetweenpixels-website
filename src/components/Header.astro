@@ -1,6 +1,7 @@
 ---
 import LogoMark from "../assets/brand/logo-mark.svg";
 import LogoMarkDark from "../assets/brand/logo-mark-dark.svg";
+import { url } from "../lib/url";
 import ThemeToggle from "./ThemeToggle.astro";
 
 const links = [
@@ -8,28 +9,22 @@ const links = [
 	{ to: "/episodes", label: "Episodes" },
 	{ to: "/about", label: "About" },
 ];
-
-import { url } from "../lib/url";
 ---
 
-<header class="border-b border-border">
-  <div class="mx-auto flex max-w-5xl items-center justify-between px-4 py-5 md:px-8">
-    <a href={url("/")} class="flex items-center gap-2">
-      {/* Dark mode gets a light-outline variant — the mark's dark-violet edge
-         nearly disappears against the near-black page background otherwise. */}
-      <img src={LogoMark.src} alt="Stuck Between Pixels" class="h-8 w-auto dark:hidden" />
-      <img
-        src={LogoMarkDark.src}
-        alt="Stuck Between Pixels"
-        class="hidden h-8 w-auto dark:block"
-      />
-      <span class="font-display text-lg font-medium">Stuck Between Pixels</span>
+<header class="sticky top-0 z-30 border-b border-border bg-bg/85 backdrop-blur">
+  <div class="mx-auto flex max-w-5xl items-center justify-between px-4 py-4 md:px-8">
+    <a href={url("/")} class="flex items-center gap-2.5">
+      {/* The mark's linework is ink on paper and bone on charcoal — swap the
+         variant rather than letting one of them vanish into the background. */}
+      <img src={LogoMark.src} alt="" class="h-9 w-auto dark:hidden" />
+      <img src={LogoMarkDark.src} alt="" class="hidden h-9 w-auto dark:block" />
+      <span class="display-tight text-lg">Stuck Between Pixels</span>
     </a>
     <div class="flex items-center gap-6">
-      <nav class="eyebrow flex gap-6 text-fg-muted">
+      <nav class="kicker flex gap-6 text-fg-muted">
         {
           links.map((link) => (
-            <a href={url(link.to)} class="transition-colors hover:text-accent">
+            <a href={url(link.to)} class="transition-colors hover:text-ember">
               {link.label}
             </a>
           ))

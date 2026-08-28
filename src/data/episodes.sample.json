@@ -5,6 +5,7 @@
 		"pubDate": "2026-08-01T13:00:00.000Z",
 		"description": "Nathanial and Stephan break down why a Facebook page isn't a website, what it actually costs to skip one, and how to get a real site without blowing the budget.",
 		"link": "https://open.spotify.com",
+		"tags": ["Business", "Web Dev"],
 		"enclosure": { "url": "", "type": "audio/mpeg" },
 		"itunes": { "duration": "38:12", "episode": 3 }
 	},
@@ -14,6 +15,7 @@
 		"pubDate": "2026-07-18T13:00:00.000Z",
 		"description": "Is WordPress still worth building on when everyone's chasing the next headless framework? The honest answer, from someone who builds client sites on it every week.",
 		"link": "https://open.spotify.com",
+		"tags": ["Web Dev", "WordPress"],
 		"enclosure": { "url": "", "type": "audio/mpeg" },
 		"itunes": { "duration": "41:05", "episode": 2 }
 	},
@@ -23,6 +25,8 @@
 		"pubDate": "2026-07-04T13:00:00.000Z",
 		"description": "Who we are, why we started this show, and what to expect from the marketing, business, and technology topics we'll be covering.",
 		"link": "https://open.spotify.com",
+		"tags": ["Business"],
+		"startHere": true,
 		"enclosure": { "url": "", "type": "audio/mpeg" },
 		"itunes": { "duration": "22:47", "episode": 1 }
 	}

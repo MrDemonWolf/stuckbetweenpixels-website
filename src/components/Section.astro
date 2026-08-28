@@ -1,0 +1,57 @@
+---
+// Owns page rhythm so sections stop being hand-rolled `max-w-3xl py-16` copies.
+// `ink` is the full-bleed band that breaks the page into movements — the single
+// biggest fix for the old one-width-all-the-way-down layout.
+
+interface Props {
+	variant?: "paper" | "ink";
+	width?: "prose" | "wide" | "full";
+	kicker?: string;
+	heading?: string;
+	/** Renders the heading smaller — for secondary sections. */
+	compact?: boolean;
+	id?: string;
+	class?: string;
+}
+
+const {
+	variant = "paper",
+	width = "wide",
+	kicker,
+	heading,
+	compact = false,
+	id,
+	class: className = "",
+} = Astro.props;
+
+const bg = variant === "ink" ? "bg-surface border-y border-border" : "";
+
+const inner = {
+	prose: "max-w-2xl",
+	wide: "max-w-5xl",
+	full: "max-w-none",
+}[width];
+---
+
+<section id={id} class:list={[bg, "py-16 md:py-24", className]}>
+  <div class:list={["mx-auto px-4 md:px-8", inner]}>
+    {
+      (kicker || heading) && (
+        <header class="reveal mb-10">
+          {kicker && <p class="kicker text-ember">{kicker}</p>}
+          {heading && (
+            <h2
+              class:list={[
+                "display mt-3 text-balance",
+                compact ? "text-3xl md:text-4xl" : "text-4xl md:text-[length:var(--text-section)]",
+              ]}
+            >
+              {heading}
+            </h2>
+          )}
+        </header>
+      )
+    }
+    <slot />
+  </div>
+</section>

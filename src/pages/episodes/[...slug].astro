@@ -11,6 +11,7 @@ import {
 	formatDate,
 	hasArtworkFor,
 	slugFor,
+	tagsFor,
 } from "../../lib/episodes";
 
 export async function getStaticPaths() {
@@ -25,6 +26,8 @@ const { entry } = Astro.props;
 const data = entry.data as Record<string, unknown>;
 const duration = durationFor(entry);
 const audioUrl = audioUrlFor(entry);
+const number = episodeNumberFor(entry);
+const tags = tagsFor(entry);
 
 const site = Astro.site ?? new URL("https://stuckbetweenpixels.com");
 
@@ -58,14 +61,35 @@ import { url } from "../../lib/url";
   image={hasArtworkFor(entry) ? artworkFor(entry) : undefined}
   schema={schema}
 >
-  <article class="mx-auto max-w-2xl px-4 py-16 md:px-8">
-    <p class="eyebrow text-fg-muted">
-      {formatDate(data.pubDate)}
-      {duration && <span> &middot; {duration}</span>}
-    </p>
-    <h1 class="mt-2 font-display text-3xl font-medium md:text-4xl">{data.title as string}</h1>
+  <header class="border-b border-border bg-surface">
+    <div class="mx-auto max-w-3xl px-4 pt-14 pb-12 md:px-8 md:pt-20">
+      <p class="kicker text-ember">
+        {number ? `Episode ${String(number).padStart(2, "0")}` : "Episode"}
+      </p>
+      <h1 class="display-tight mt-4 text-3xl text-balance md:text-5xl">
+        {data.title as string}
+      </h1>
+      <p class="kicker mt-5 flex flex-wrap items-center gap-x-3 text-fg-muted">
+        <span>{formatDate(data.pubDate)}</span>
+        {duration && <span class="text-border-strong">/</span>}
+        {duration && <span>{duration}</span>}
+      </p>
+      {
+        tags.length > 0 && (
+          <ul class="mt-4 flex flex-wrap gap-2">
+            {tags.map((tag) => (
+              <li class="kicker rounded-full border border-border px-3 py-1 text-[0.65rem] text-fg-muted">
+                {tag}
+              </li>
+            ))}
+          </ul>
+        )
+      }
+    </div>
+  </header>
 
-    <div class="mt-6">
+  <article class="mx-auto max-w-3xl px-4 py-14 md:px-8">
+    <div>
       <Player audioUrl={audioUrl} />
       {
         audioUrl && (
@@ -75,7 +99,7 @@ import { url } from "../../lib/url";
             data-episode-id={entry.id}
             data-title={data.title as string}
             data-audio-url={audioUrl}
-            class="eyebrow mt-3 inline-flex items-center gap-2 rounded-full border border-border px-4 py-2 text-fg-muted transition-colors hover:border-accent hover:text-accent"
+            class="kicker mt-3 inline-flex items-center gap-2 rounded-full border border-border px-4 py-2 text-fg-muted transition-colors hover:border-ember hover:text-ember"
           >
             <svg class="size-4" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
               <path d="M8 5v14l11-7Z" />
@@ -86,18 +110,22 @@ import { url } from "../../lib/url";
       }
     </div>
 
-    <p class="mt-8 whitespace-pre-line text-fg-muted">
+    <h2 class="kicker mt-12 text-ember">Show notes</h2>
+    <p class="mt-4 text-lg whitespace-pre-line text-fg-muted">
       {data.description as string}
     </p>
 
-    <div class="mt-12 border-t border-border pt-8">
-      <p class="eyebrow text-fg-muted">Hosted by</p>
-      <div class="mt-4">
+    <div class="mt-14 border-t border-border pt-8">
+      <p class="kicker text-fg-muted">Hosted by</p>
+      <div class="mt-5">
         <HostStrip />
       </div>
     </div>
 
-    <a href={url("/episodes")} class="mt-8 inline-block text-brand hover:underline">
+    <a
+      href={url("/episodes")}
+      class="kicker mt-10 inline-block text-ember underline-offset-4 hover:underline"
+    >
       &larr; All episodes
     </a>
   </article>

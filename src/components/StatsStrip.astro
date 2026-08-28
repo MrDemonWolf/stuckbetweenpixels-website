@@ -1,0 +1,41 @@
+---
+import type { CollectionEntry } from "astro:content";
+import { totalRuntimeHours } from "../lib/episodes";
+
+interface Props {
+	entries: CollectionEntry<"episodes">[];
+	class?: string;
+}
+
+const { entries, class: className = "" } = Astro.props;
+const hours = totalRuntimeHours(entries);
+
+const stats = [
+	{
+		value: String(entries.length).padStart(2, "0"),
+		label: entries.length === 1 ? "Episode" : "Episodes",
+	},
+	// Hide runtime until there's at least an hour — "0 hrs" reads as broken.
+	...(hours > 0
+		? [{ value: `${hours}`, label: hours === 1 ? "Hour" : "Hours" }]
+		: []),
+	{ value: "2", label: "Hosts" },
+	{ value: "Bi-wk", label: "Cadence" },
+];
+---
+
+<dl class:list={["flex flex-wrap items-stretch", className]}>
+  {
+    stats.map((stat, i) => (
+      <div
+        class:list={[
+          "flex flex-col justify-center pr-6 md:pr-8",
+          i > 0 && "border-l border-border pl-6 md:pl-8",
+        ]}
+      >
+        <dt class="kicker order-2 mt-1 text-fg-muted">{stat.label}</dt>
+        <dd class="display-tight order-1 text-2xl md:text-3xl">{stat.value}</dd>
+      </div>
+    ))
+  }
+</dl>

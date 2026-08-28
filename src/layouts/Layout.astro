@@ -81,6 +81,9 @@ import { url } from "../lib/url";
         const theme =
           stored ?? (matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
         document.documentElement.dataset.theme = theme;
+        // Arms the scroll-reveal hidden state. Without JS the class is never
+        // added and `.js .reveal` never matches, so content stays visible.
+        document.documentElement.classList.add("js");
       })();
     </script>
     {
@@ -102,11 +105,50 @@ import { url } from "../lib/url";
   <body class="min-h-screen font-sans">
     <div id="page">
       <Header />
-      <main class="pb-24">
+      <main>
         <slot />
       </main>
       <Footer />
     </div>
-    <StickyPlayer transition:persist />
+    {/* transition:persist lives on the root div inside StickyPlayer — see the
+       note there for why it can't go on the component. */}
+    <StickyPlayer />
+
+    <script>
+      // Scroll reveal. `.reveal` starts hidden in CSS, so if this never runs the
+      // content would be invisible — bail by revealing everything instead.
+      function initReveal() {
+        const items = document.querySelectorAll<HTMLElement>(".reveal:not(.is-visible)");
+        if (!items.length) return;
+
+        if (
+          !("IntersectionObserver" in window) ||
+          matchMedia("(prefers-reduced-motion: reduce)").matches
+        ) {
+          for (const el of items) el.classList.add("is-visible");
+          return;
+        }
+
+        const observer = new IntersectionObserver(
+          (entries) => {
+            for (const entry of entries) {
+              if (!entry.isIntersecting) continue;
+              const el = entry.target as HTMLElement;
+              // Stagger siblings so a list arrives as a cascade, not a slab.
+              const siblings = Array.from(el.parentElement?.children ?? []);
+              el.style.transitionDelay = `${Math.min(siblings.indexOf(el), 6) * 60}ms`;
+              el.classList.add("is-visible");
+              observer.unobserve(el);
+            }
+          },
+          { rootMargin: "0px 0px -10% 0px", threshold: 0.05 },
+        );
+
+        for (const el of items) observer.observe(el);
+      }
+
+      initReveal();
+      document.addEventListener("astro:page-load", initReveal);
+    </script>
   </body>
 </html>

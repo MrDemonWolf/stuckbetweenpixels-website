@@ -1,6 +1,7 @@
 ---
 import type { CollectionEntry } from "astro:content";
 import LogoMark from "../assets/brand/logo-mark.svg";
+import LogoMarkDark from "../assets/brand/logo-mark-dark.svg";
 import {
 	artworkFor,
 	audioUrlFor,
@@ -9,7 +10,9 @@ import {
 	formatDate,
 	hasArtworkFor,
 	slugFor,
+	tagsFor,
 } from "../lib/episodes";
+import { url } from "../lib/url";
 
 interface Props {
 	entry: CollectionEntry<"episodes">;
@@ -22,31 +25,36 @@ const duration = durationFor(entry);
 const number = episodeNumberFor(entry) ?? index;
 const audioUrl = audioUrlFor(entry);
 const hasArtwork = hasArtworkFor(entry);
-
-import { url } from "../lib/url";
+const tags = tagsFor(entry);
 ---
 
-<div
-  class="group grid grid-cols-[3.5rem_1fr] items-center gap-4 border-b border-border py-6 first:pt-0 md:grid-cols-[5rem_1fr]"
+<article
+  class="group reveal relative grid grid-cols-[1fr] gap-4 border-b border-border py-7 sm:grid-cols-[5rem_1fr] sm:gap-6 md:grid-cols-[6rem_1fr]"
 >
-  <span class="font-mono text-sm text-fg-muted">
-    {number ? `EP.${String(number).padStart(2, "0")}` : "EP."}
-  </span>
+  {/* Oversized numeral as ornament — outlined, fills ember on hover. */}
+  <p
+    class="display-tight hidden text-4xl text-transparent transition-colors duration-200 group-hover:text-ember select-none sm:block md:text-5xl"
+    style="-webkit-text-stroke: 1.5px var(--color-border-strong);"
+    aria-hidden="true"
+  >
+    {number ? String(number).padStart(2, "0") : "--"}
+  </p>
 
-  <div class="flex items-center gap-4">
-    <div class="relative hidden shrink-0 sm:block">
+  <div class="flex items-start gap-4 sm:gap-5">
+    <div class="relative hidden shrink-0 overflow-hidden rounded-xl sm:block">
       {
         hasArtwork ? (
           <img
             src={artworkFor(entry)}
             alt=""
-            width="64"
-            height="64"
-            class="size-16 rounded-xl border border-border object-cover"
+            width="96"
+            height="96"
+            class="size-20 rounded-xl border border-border object-cover transition-transform duration-300 group-hover:scale-105 md:size-24"
           />
         ) : (
-          <div class="grid size-16 place-items-center rounded-xl border border-border bg-surface">
-            <img src={LogoMark.src} alt="" class="w-2/5" />
+          <div class="grid size-20 place-items-center rounded-xl border border-border bg-surface md:size-24">
+            <img src={LogoMark.src} alt="" class="w-1/2 dark:hidden" />
+            <img src={LogoMarkDark.src} alt="" class="hidden w-1/2 dark:block" />
           </div>
         )
       }
@@ -60,9 +68,9 @@ import { url } from "../lib/url";
             data-audio-url={audioUrl}
             data-artwork={artworkFor(entry)}
             aria-label={`Play ${data.title as string}`}
-            class="absolute inset-0 grid place-items-center rounded-xl bg-bg/60 text-fg opacity-0 transition-opacity group-hover:opacity-100"
+            class="absolute inset-0 z-10 grid place-items-center rounded-xl bg-bg/70 text-ember opacity-0 transition-opacity group-hover:opacity-100 focus-visible:opacity-100"
           >
-            <svg class="size-6" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+            <svg class="size-7" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
               <path d="M8 5v14l11-7Z" />
             </svg>
           </button>
@@ -70,15 +78,34 @@ import { url } from "../lib/url";
       }
     </div>
 
-    <a href={url(`/episodes/${slugFor(entry)}`)} class="min-w-0">
-      <h3 class="font-display text-xl transition-colors group-hover:text-brand md:text-2xl">
-        {data.title as string}
+    <div class="min-w-0">
+      <h3 class="display-tight text-xl transition-colors group-hover:text-ember md:text-2xl">
+        {/* Stretched link makes the whole row clickable without nesting the
+           play button inside the anchor. */}
+        <a href={url(`/episodes/${slugFor(entry)}`)} class="after:absolute after:inset-0">
+          {data.title as string}
+        </a>
       </h3>
-      <p class="eyebrow mt-2 text-fg-muted">
-        {formatDate(data.pubDate)}
-        {duration && <span> &middot; {duration}</span>}
+
+      <p class="kicker mt-2 flex flex-wrap items-center gap-x-3 text-fg-muted">
+        <span>{formatDate(data.pubDate)}</span>
+        {duration && <span class="text-border-strong">/</span>}
+        {duration && <span>{duration}</span>}
       </p>
+
       <p class="mt-2 line-clamp-2 max-w-2xl text-fg-muted">{data.description as string}</p>
-    </a>
+
+      {
+        tags.length > 0 && (
+          <ul class="mt-3 flex flex-wrap gap-2">
+            {tags.map((tag) => (
+              <li class="kicker rounded-full border border-border px-2.5 py-1 text-[0.65rem] text-fg-muted">
+                {tag}
+              </li>
+            ))}
+          </ul>
+        )
+      }
+    </div>
   </div>
-</div>
+</article>

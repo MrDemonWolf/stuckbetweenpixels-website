@@ -1,6 +1,6 @@
 ---
 import type { CollectionEntry } from "astro:content";
-import LogoMark from "../assets/brand/logo-mark-dark.svg";
+import LogoMarkDark from "../assets/brand/logo-mark-dark.svg";
 import {
 	artworkFor,
 	audioUrlFor,
@@ -9,93 +9,114 @@ import {
 	formatDate,
 	hasArtworkFor,
 	slugFor,
+	tagsFor,
 } from "../lib/episodes";
+import { url } from "../lib/url";
 
 interface Props {
 	entry: CollectionEntry<"episodes">;
+	kicker?: string;
+	/** Reverses the columns so Start Here and Latest don't mirror each other. */
+	flip?: boolean;
 }
 
-const { entry } = Astro.props;
+const { entry, kicker = "Latest episode", flip = false } = Astro.props;
 const data = entry.data as Record<string, unknown>;
 const number = episodeNumberFor(entry);
 const duration = durationFor(entry);
 const audioUrl = audioUrlFor(entry);
-const hasArtwork = hasArtworkFor(entry);
-
-import { url } from "../lib/url";
+const tags = tagsFor(entry);
 ---
 
-<section class="mx-auto max-w-5xl px-4 py-16 md:px-8">
-  <p class="eyebrow text-fg-muted">Latest episode</p>
-  <div class="mt-4 grid items-center gap-8 md:grid-cols-[1fr_1.4fr]">
-    <div class="relative">
-      <div class="absolute -inset-4 -z-10 rounded-[1.5rem] bg-brand-strong"></div>
+<div class="reveal grid items-center gap-10 md:grid-cols-[minmax(0,0.85fr)_minmax(0,1.15fr)]">
+  <div class:list={["relative", flip && "md:order-2"]}>
+    {/* Numeral breaks outside the artwork column — the grid-break moment. */}
+    <p
+      class="display pointer-events-none absolute -top-8 -left-4 z-10 text-6xl text-transparent select-none md:-top-12 md:-left-10 md:text-8xl"
+      style="-webkit-text-stroke: 2px var(--color-ember);"
+      aria-hidden="true"
+    >
+      {number ? `EP.${String(number).padStart(2, "0")}` : "EP."}
+    </p>
+
+    {
+      hasArtworkFor(entry) ? (
+        <img
+          src={artworkFor(entry)}
+          alt=""
+          width="520"
+          height="520"
+          class="aspect-square w-full rounded-2xl border border-border object-cover shadow-card"
+        />
+      ) : (
+        <div class="grid aspect-square w-full place-items-center rounded-2xl border border-border bg-surface shadow-card">
+          <img src={LogoMarkDark.src} alt="" class="w-1/2" />
+        </div>
+      )
+    }
+  </div>
+
+  <div>
+    <p class="kicker text-ember">{kicker}</p>
+
+    <h2 class="display-tight mt-3 text-3xl text-balance md:text-4xl">
+      <a href={url(`/episodes/${slugFor(entry)}`)} class="transition-colors hover:text-ember">
+        {data.title as string}
+      </a>
+    </h2>
+
+    <p class="kicker mt-3 flex flex-wrap items-center gap-x-3 text-fg-muted">
+      <span>{formatDate(data.pubDate)}</span>
+      {duration && <span class="text-border-strong">/</span>}
+      {duration && <span>{duration}</span>}
+    </p>
+
+    <p class="mt-5 max-w-lg text-fg-muted">{data.description as string}</p>
+
+    {
+      tags.length > 0 && (
+        <ul class="mt-4 flex flex-wrap gap-2">
+          {tags.map((tag) => (
+            <li class="kicker rounded-full border border-border px-3 py-1 text-[0.65rem] text-fg-muted">
+              {tag}
+            </li>
+          ))}
+        </ul>
+      )
+    }
+
+    <div class="mt-7 flex flex-wrap items-center gap-5">
       {
-        hasArtwork ? (
-          <img
-            src={artworkFor(entry)}
-            alt=""
-            width="480"
-            height="480"
-            class="aspect-square w-full rounded-xl object-cover shadow-card"
-          />
+        audioUrl ? (
+          <button
+            type="button"
+            data-play-episode
+            data-episode-id={entry.id}
+            data-title={data.title as string}
+            data-audio-url={audioUrl}
+            data-artwork={artworkFor(entry)}
+            class="kicker inline-flex items-center gap-2 rounded-full bg-ember px-6 py-3 text-on-ember transition-opacity hover:opacity-90"
+          >
+            <svg class="size-4" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+              <path d="M8 5v14l11-7Z" />
+            </svg>
+            Play episode
+          </button>
         ) : (
-          <div class="grid aspect-square w-full place-items-center rounded-xl bg-brand-strong shadow-card">
-            <img src={LogoMark.src} alt="" class="w-2/5" />
-          </div>
+          <a
+            href={url(`/episodes/${slugFor(entry)}`)}
+            class="kicker inline-flex items-center gap-2 rounded-full bg-ember px-6 py-3 text-on-ember transition-opacity hover:opacity-90"
+          >
+            Listen
+          </a>
         )
       }
-      <p
-        class="pointer-events-none absolute -top-6 -left-4 font-display text-6xl font-medium text-brand-strong opacity-15 select-none md:text-8xl"
-        style="-webkit-text-stroke: 2px var(--color-on-brand); color: transparent;"
-        aria-hidden="true"
+      <a
+        href={url(`/episodes/${slugFor(entry)}`)}
+        class="kicker text-fg-muted underline-offset-4 transition-colors hover:text-ember hover:underline"
       >
-        {number ? `EP.${String(number).padStart(2, "0")}` : "EP."}
-      </p>
-    </div>
-
-    <div>
-      <a href={url(`/episodes/${slugFor(entry)}`)}>
-        <h2 class="font-display text-2xl font-medium transition-colors hover:text-brand md:text-3xl">
-          {data.title as string}
-        </h2>
+        Show notes &rarr;
       </a>
-      <p class="eyebrow mt-2 text-fg-muted">
-        {formatDate(data.pubDate)}
-        {duration && <span> &middot; {duration}</span>}
-      </p>
-      <p class="mt-4 max-w-lg text-fg-muted">{data.description as string}</p>
-
-      <div class="mt-6 flex flex-wrap items-center gap-4">
-        {
-          audioUrl ? (
-            <button
-              type="button"
-              data-play-episode
-              data-episode-id={entry.id}
-              data-title={data.title as string}
-              data-audio-url={audioUrl}
-              data-artwork={artworkFor(entry)}
-              class="eyebrow inline-flex items-center gap-2 rounded-full bg-brand px-5 py-2.5 text-bg transition-opacity hover:opacity-90"
-            >
-              <svg class="size-4" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-                <path d="M8 5v14l11-7Z" />
-              </svg>
-              Play episode
-            </button>
-          ) : (
-            <a
-              href={url(`/episodes/${slugFor(entry)}`)}
-              class="eyebrow inline-flex items-center gap-2 rounded-full bg-brand px-5 py-2.5 text-bg transition-opacity hover:opacity-90"
-            >
-              Listen
-            </a>
-          )
-        }
-        <a href={url(`/episodes/${slugFor(entry)}`)} class="text-sm text-brand hover:underline">
-          Show notes &rarr;
-        </a>
-      </div>
     </div>
   </div>
-</section>
+</div>

@@ -32,6 +32,7 @@ needed. Copy an existing entry and fill in:
   "description": "Show notes / description.",
   "link": "https://open.spotify.com",
   "image": "/episodes/ep-04.jpg",
+  "tags": ["Web Dev", "Business"],
   "enclosure": { "url": "", "type": "audio/mpeg" },
   "itunes": { "duration": "35:00", "episode": 4 }
 }
@@ -44,6 +45,11 @@ needed. Copy an existing entry and fill in:
 - **`enclosure.url`**: leave it `""` until you have a direct MP3 link — the
   episode page falls back to "Listen on Spotify" and the sticky/hover play
   buttons just don't render.
+- **`tags`**: optional topic chips, also used by the filter row on `/episodes`.
+  When the real feed takes over these come from its `categories` instead.
+- **`"startHere": true`**: marks the curated entry-point episode shown in the
+  "New here? Start with this" block on the homepage. Set it on exactly one
+  episode; with none set it falls back to the oldest.
 - New entries sort by `pubDate` automatically (`sortByDateDesc` in
   `src/lib/episodes.ts`) — no manual ordering.
 

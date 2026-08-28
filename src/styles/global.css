@@ -1,41 +1,43 @@
 @import "tailwindcss";
-@import "@fontsource-variable/fraunces/standard.css";
-@import "@fontsource-variable/fraunces/standard-italic.css";
-@import "@fontsource/ibm-plex-mono/500.css";
-@import "@fontsource/ibm-plex-mono/600.css";
-@import "@fontsource/work-sans/400.css";
-@import "@fontsource/work-sans/500.css";
+/* Archivo's wdth build carries font-stretch 62%–125% — the Expanded display face
+   comes from this one variable font, no second family. */
+@import "@fontsource-variable/archivo/wdth.css";
+@import "@fontsource-variable/instrument-sans/standard.css";
+@import "@fontsource-variable/jetbrains-mono/wght.css";
 @plugin "@tailwindcss/typography";
 
 /* Explicit toggle wins over prefers-color-scheme — Layout.astro's inline script
    resolves system→concrete before paint and sets data-theme. */
 @custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
 
-/* Tokens — see DESIGN.md for the reasoning/contrast checks behind these values.
+/* Tokens — see DESIGN.md for the measured contrast ratios behind these values.
    Tailwind v4 @theme can't itself be conditional, so --color-* here just point at
    --sbp-* indirection variables, and it's THOSE that flip per scheme below. */
 @theme {
-	--font-sans: "Work Sans", sans-serif;
-	--font-display: "Fraunces Variable", "Fraunces", serif;
-	--font-mono: "IBM Plex Mono", ui-monospace, monospace;
+	--font-sans: "Instrument Sans Variable", ui-sans-serif, sans-serif;
+	--font-display: "Archivo Variable", ui-sans-serif, sans-serif;
+	--font-mono: "JetBrains Mono Variable", ui-monospace, monospace;
 
 	--color-bg: var(--sbp-bg);
 	--color-surface: var(--sbp-surface);
 	--color-border: var(--sbp-border);
+	--color-border-strong: var(--sbp-border-strong);
 	--color-fg: var(--sbp-fg);
 	--color-fg-muted: var(--sbp-fg-muted);
-	--color-brand: var(--sbp-brand);
-	/* Fixed in both schemes — DESIGN.md: a fill color, never a text color. */
-	--color-brand-strong: #412871;
-	--color-accent: var(--sbp-accent);
+	--color-ember: var(--sbp-ember);
+	--color-amber: var(--sbp-amber);
 	--color-danger: var(--sbp-danger);
-	/* Fixed light text for content sitting on --color-brand-strong fills (hero, footer
-     band) — unlike --color-fg this does NOT flip in light mode, since brand-strong
-     stays a dark purple fill in both schemes. */
-	--color-on-brand: #f3efe4;
-	--color-on-brand-muted: #cabfe6;
 
-	--shadow-card: 0 8px 24px -8px rgb(15 10 26 / 0.4);
+	/* DESIGN.md rule 1. Ember is BRIGHT on dark and DARK on light, so the text
+     that sits on an ember fill has to flip too: ink on dark (6.36:1), bone on
+     light (4.84:1). Getting this backwards fails AA in one scheme — always use
+     this token on an ember/amber fill, never text-fg. */
+	--color-on-ember: var(--sbp-on-ember);
+
+	--text-section: 2.5rem;
+	--text-display: clamp(2.75rem, 6.5vw, 5.25rem);
+
+	--shadow-card: 0 12px 32px -12px rgb(0 0 0 / 0.55);
 
 	--animate-hero-rise: hero-rise 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
 	@keyframes hero-rise {
@@ -48,67 +50,86 @@
 			transform: translateY(0);
 		}
 	}
+
+	--animate-on-air: on-air 2s ease-in-out infinite;
+	@keyframes on-air {
+		0%,
+		100% {
+			opacity: 1;
+		}
+		50% {
+			opacity: 0.35;
+		}
+	}
 }
 
-/* Dark is the design default. */
+/* Dark is the design default — this is a late-night studio. */
 :root {
 	color-scheme: dark;
-	--sbp-bg: #120c1f;
-	--sbp-surface: #1c1430;
-	--sbp-border: #382d54;
-	--sbp-fg: #f3efe4;
-	--sbp-fg-muted: #b3a8cc;
-	--sbp-brand: #a68af0;
-	--sbp-accent: #e8a33d;
-	--sbp-danger: #ef7e8f;
+	--sbp-bg: #0e0b0a;
+	--sbp-surface: #1a1512;
+	--sbp-border: #2e2621;
+	--sbp-border-strong: #786658;
+	--sbp-fg: #f5efe6;
+	--sbp-fg-muted: #b0a69c;
+	--sbp-ember: #ff5c29;
+	--sbp-amber: #f5a524;
+	--sbp-danger: #ff8a8a;
+	--sbp-on-ember: #0e0b0a;
 	--sbp-grain-blend: overlay;
-	--sbp-grain-opacity: 0.5;
+	--sbp-grain-opacity: 0.45;
 }
 
 /* System light, unless the visitor explicitly chose dark via the toggle. */
 @media (prefers-color-scheme: light) {
 	:root:not([data-theme="dark"]) {
 		color-scheme: light;
-		--sbp-bg: #f7f1e6;
-		--sbp-surface: #fffdf8;
-		--sbp-border: #e1d5c0;
-		--sbp-fg: #1c1430;
-		--sbp-fg-muted: #665c7a;
-		--sbp-brand: #412871;
-		--sbp-accent: #b5701a;
-		--sbp-danger: #b23a4c;
+		--sbp-bg: #faf6ef;
+		--sbp-surface: #ffffff;
+		--sbp-border: #e3dacd;
+		--sbp-border-strong: #8a7a66;
+		--sbp-fg: #17120f;
+		--sbp-fg-muted: #5c534b;
+		--sbp-ember: #c43d14;
+		--sbp-amber: #8a5a00;
+		--sbp-danger: #b3261e;
+		--sbp-on-ember: #faf6ef;
 		--sbp-grain-blend: multiply;
-		--sbp-grain-opacity: 0.35;
+		--sbp-grain-opacity: 0.3;
 	}
 }
 
 /* Explicit choices from the toggle win in both directions. */
 :root[data-theme="light"] {
 	color-scheme: light;
-	--sbp-bg: #f7f1e6;
-	--sbp-surface: #fffdf8;
-	--sbp-border: #e1d5c0;
-	--sbp-fg: #1c1430;
-	--sbp-fg-muted: #665c7a;
-	--sbp-brand: #412871;
-	--sbp-accent: #b5701a;
-	--sbp-danger: #b23a4c;
+	--sbp-bg: #faf6ef;
+	--sbp-surface: #ffffff;
+	--sbp-border: #e3dacd;
+	--sbp-border-strong: #8a7a66;
+	--sbp-fg: #17120f;
+	--sbp-fg-muted: #5c534b;
+	--sbp-ember: #c43d14;
+	--sbp-amber: #8a5a00;
+	--sbp-danger: #b3261e;
+	--sbp-on-ember: #faf6ef;
 	--sbp-grain-blend: multiply;
-	--sbp-grain-opacity: 0.35;
+	--sbp-grain-opacity: 0.3;
 }
 
 :root[data-theme="dark"] {
 	color-scheme: dark;
-	--sbp-bg: #120c1f;
-	--sbp-surface: #1c1430;
-	--sbp-border: #382d54;
-	--sbp-fg: #f3efe4;
-	--sbp-fg-muted: #b3a8cc;
-	--sbp-brand: #a68af0;
-	--sbp-accent: #e8a33d;
-	--sbp-danger: #ef7e8f;
+	--sbp-bg: #0e0b0a;
+	--sbp-surface: #1a1512;
+	--sbp-border: #2e2621;
+	--sbp-border-strong: #786658;
+	--sbp-fg: #f5efe6;
+	--sbp-fg-muted: #b0a69c;
+	--sbp-ember: #ff5c29;
+	--sbp-amber: #f5a524;
+	--sbp-danger: #ff8a8a;
+	--sbp-on-ember: #0e0b0a;
 	--sbp-grain-blend: overlay;
-	--sbp-grain-opacity: 0.5;
+	--sbp-grain-opacity: 0.45;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -128,8 +149,8 @@ body {
 }
 
 /* Paper/film grain — pure CSS, no image asset. Subtle, never over text. Blend mode
-   and opacity flip per theme (global.css --sbp-grain-*): overlay inverts visually on
-   a light base, so light mode uses multiply at lower opacity instead. */
+   and opacity flip per theme (--sbp-grain-*): overlay inverts visually on a light
+   base, so light mode uses multiply at lower opacity instead. */
 body::before {
 	content: "";
 	position: fixed;
@@ -146,10 +167,65 @@ body::before {
 	z-index: 1;
 }
 
-.eyebrow {
+/* No warm-dark border reaches 3:1 without washing out to grey, so the focus ring
+   is ember (6.36:1) rather than a border colour. See DESIGN.md rule 2. */
+:where(a, button, input, select, textarea, [tabindex]):focus-visible {
+	outline: 2px solid var(--color-ember);
+	outline-offset: 2px;
+	border-radius: 2px;
+}
+
+/* Mono metadata: dates, durations, episode numbers, nav. Was `.eyebrow`. */
+.kicker {
 	font-family: var(--font-mono);
 	font-weight: 600;
 	font-size: 0.75rem;
-	letter-spacing: 0.14em;
+	letter-spacing: 0.16em;
 	text-transform: uppercase;
+}
+
+/* The broadcast lower-third face. Only ever used large — it's the whole look. */
+.display {
+	font-family: var(--font-display);
+	font-stretch: 125%;
+	font-weight: 800;
+	line-height: 0.95;
+	letter-spacing: -0.02em;
+	text-transform: uppercase;
+}
+
+/* Slightly narrower, for long headlines that would otherwise wrap badly. */
+.display-tight {
+	font-family: var(--font-display);
+	font-stretch: 100%;
+	font-weight: 800;
+	line-height: 1;
+	letter-spacing: -0.015em;
+}
+
+.on-air-dot {
+	animation: var(--animate-on-air);
+}
+
+/* Scroll reveal. The hidden state is scoped to .js — set by the inline script in
+   Layout.astro's <head> — so with JavaScript disabled the content is simply
+   visible rather than stuck at opacity 0. */
+.js .reveal {
+	opacity: 0;
+	transform: translateY(18px);
+	transition:
+		opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1),
+		transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.js .reveal.is-visible {
+	opacity: 1;
+	transform: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.js .reveal {
+		opacity: 1;
+		transform: none;
+	}
 }

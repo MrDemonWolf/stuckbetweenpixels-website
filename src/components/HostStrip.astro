@@ -9,7 +9,7 @@ import { url } from "../lib/url";
     hosts.map((host) => (
       <a
         href={url(`/about#${host.slug}`)}
-        class="group flex items-center gap-4 rounded-2xl border border-border bg-surface p-4 transition-colors hover:border-accent"
+        class="group flex items-center gap-4 rounded-2xl border border-border bg-surface p-4 transition-colors hover:border-ember"
       >
         <Image
           src={host.photo}
@@ -19,8 +19,8 @@ import { url } from "../lib/url";
           class="size-14 shrink-0 rounded-full object-cover"
         />
         <div class="min-w-0">
-          <p class="font-display text-lg leading-tight group-hover:text-accent">{host.name}</p>
-          <p class="eyebrow mt-1 truncate text-fg-muted">{host.role}</p>
+          <p class="display-tight text-lg leading-tight group-hover:text-ember">{host.name}</p>
+          <p class="kicker mt-1 truncate text-fg-muted">{host.role}</p>
         </div>
       </a>
     ))

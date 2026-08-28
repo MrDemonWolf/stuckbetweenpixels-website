@@ -1,18 +1,79 @@
 ---
+import LogoMark from "../assets/brand/logo-mark.svg";
+import LogoMarkDark from "../assets/brand/logo-mark-dark.svg";
+import { url } from "../lib/url";
 import SubscribeRow from "./SubscribeRow.astro";
 
 const year = new Date().getFullYear();
 
-import { url } from "../lib/url";
+const columns = [
+	{
+		title: "Show",
+		links: [
+			{ label: "Home", href: url("/") },
+			{ label: "Episodes", href: url("/episodes") },
+			{ label: "About", href: url("/about") },
+		],
+	},
+	{
+		title: "Legal",
+		links: [
+			{ label: "Privacy", href: url("/legal") },
+			{ label: "Terms", href: url("/terms") },
+			{ label: "RSS", href: url("/rss.xml") },
+		],
+	},
+];
 ---
 
-<footer class="mt-16 border-t border-border">
-  <div class="mx-auto flex max-w-5xl flex-col gap-4 px-4 py-10 md:flex-row md:items-center md:justify-between md:px-8">
-    <SubscribeRow />
-    <div class="eyebrow flex flex-col gap-2 text-fg-muted md:flex-row md:items-center md:gap-4">
-      <p>&copy; {year} Stuck Between Pixels</p>
-      <a href={url("/legal")} class="hover:text-accent">Privacy</a>
-      <a href={url("/terms")} class="hover:text-accent">Terms</a>
+<footer class="border-t border-border bg-surface">
+  {/* Extra bottom padding keeps the fixed StickyPlayer from covering the last
+     footer row when it's open. */}
+  <div class="mx-auto max-w-5xl px-4 pt-14 pb-28 md:px-8">
+    <div class="grid gap-10 md:grid-cols-[1.4fr_1fr_1fr]">
+      <div>
+        <div class="flex items-center gap-2">
+          <img src={LogoMark.src} alt="" class="h-9 w-auto dark:hidden" />
+          <img src={LogoMarkDark.src} alt="" class="hidden h-9 w-auto dark:block" />
+          <span class="display-tight text-lg">Stuck Between Pixels</span>
+        </div>
+        <p class="mt-4 max-w-xs text-sm text-fg-muted">
+          Web development, DevOps, and the business skills that actually move a
+          tech career forward. New episodes every other week.
+        </p>
+        <div class="mt-6">
+          <SubscribeRow />
+        </div>
+      </div>
+
+      {
+        columns.map((column) => (
+          <nav>
+            <h2 class="kicker text-fg-muted">{column.title}</h2>
+            <ul class="mt-4 space-y-2">
+              {column.links.map((link) => (
+                <li>
+                  <a href={link.href} class="text-sm text-fg transition-colors hover:text-ember">
+                    {link.label}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </nav>
+        ))
+      }
+    </div>
+
+    <div
+      class="mt-12 flex flex-col gap-2 border-t border-border pt-6 md:flex-row md:items-center md:justify-between"
+    >
+      <p class="kicker text-fg-muted">&copy; {year} MrDemonWolf, Inc.</p>
+      <a
+        href="mailto:contact@stuckbetweenpixels.com"
+        class="kicker text-fg-muted transition-colors hover:text-ember"
+      >
+        contact@stuckbetweenpixels.com
+      </a>
     </div>
   </div>
 </footer>

@@ -4,14 +4,20 @@ import EpisodeCard from "../components/EpisodeCard.astro";
 import FeaturedEpisode from "../components/FeaturedEpisode.astro";
 import Hero from "../components/Hero.astro";
 import HostStrip from "../components/HostStrip.astro";
-import SubscribeRow from "../components/SubscribeRow.astro";
+import Section from "../components/Section.astro";
 import { hosts } from "../data/hosts";
 import Layout from "../layouts/Layout.astro";
-import { sortByDateDesc } from "../lib/episodes";
+import { sortByDateDesc, startHereFor } from "../lib/episodes";
+import { url } from "../lib/url";
 
 const episodes = sortByDateDesc(await getCollection("episodes"));
 const [latest, ...rest] = episodes;
 const recent = rest.slice(0, 3);
+
+// The curated front door for new listeners. Hidden when it *is* the latest,
+// since showing the same episode twice reads as a bug.
+const startHere = startHereFor(episodes);
+const showStartHere = startHere && startHere.id !== latest?.id;
 
 const site = Astro.site ?? new URL("https://stuckbetweenpixels.com");
 
@@ -27,42 +33,46 @@ const schema = {
 	webFeed: new URL("/rss.xml", site).href,
 	author: hosts.map((host) => ({ "@type": "Person", name: host.name })),
 };
-
-import { url } from "../lib/url";
 ---
 
 <Layout schema={schema}>
-  <Hero />
+  <Hero entries={episodes} />
 
-  {latest && <FeaturedEpisode entry={latest} />}
+  {
+    latest && (
+      <Section width="wide">
+        <FeaturedEpisode entry={latest} kicker="Latest episode" />
+      </Section>
+    )
+  }
+
+  {
+    showStartHere && (
+      <Section variant="ink" width="wide">
+        <FeaturedEpisode entry={startHere} kicker="New here? Start with this" flip />
+      </Section>
+    )
+  }
 
   {
     recent.length > 0 && (
-      <section class="mx-auto max-w-3xl px-4 py-16 md:px-8">
-        <h2 class="eyebrow text-fg-muted">More episodes</h2>
-        <div class="mt-2">
+      <Section kicker="The archive" heading="More episodes" width="wide">
+        <div>
           {recent.map((entry, i) => (
             <EpisodeCard entry={entry} index={episodes.length - 1 - i} />
           ))}
         </div>
-        <a href={url("/episodes")} class="mt-6 inline-block text-brand hover:underline">
+        <a
+          href={url("/episodes")}
+          class="kicker mt-8 inline-block text-ember underline-offset-4 hover:underline"
+        >
           All episodes &rarr;
         </a>
-      </section>
+      </Section>
     )
   }
 
-  <section class="mx-auto max-w-3xl px-4 py-16 md:px-8">
-    <h2 class="eyebrow text-fg-muted">Hosted by</h2>
-    <div class="mt-4">
-      <HostStrip />
-    </div>
-  </section>
-
-  <section class="mx-auto max-w-3xl px-4 pb-16 md:px-8">
-    <h2 class="eyebrow text-fg-muted">Listen wherever you get podcasts</h2>
-    <div class="mt-4">
-      <SubscribeRow />
-    </div>
-  </section>
+  <Section variant="ink" kicker="Your hosts" heading="Two builders, one mic each" width="wide">
+    <HostStrip />
+  </Section>
 </Layout>

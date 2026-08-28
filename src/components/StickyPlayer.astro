@@ -1,12 +1,17 @@
 ---
-// Persistent bottom playback bar. Kept alive across navigation with
-// transition:persist (set by the caller in Layout.astro) so a single <audio>
-// element survives page swaps. Any element with [data-play-episode] on any
+// Persistent bottom playback bar. Any element with [data-play-episode] on any
 // page can start it — see the data-* contract read below.
+//
+// transition:persist MUST live on this root element, not on <StickyPlayer /> in
+// Layout.astro: the directive only applies to a component with a single root
+// node, and this component also emits a <script>. Put it on the component and
+// Astro silently emits nothing, so the audio element is torn down on every
+// navigation.
 ---
 
 <div
   id="sticky-player"
+  transition:persist="sticky-player"
   class="fixed inset-x-0 bottom-0 z-20 hidden translate-y-full border-t border-border bg-surface/90 backdrop-blur transition-transform data-[open]:flex data-[open]:translate-y-0"
 >
   <div class="mx-auto flex w-full max-w-5xl items-center gap-4 px-4 py-3 md:px-8">
@@ -16,7 +21,7 @@
       id="sp-toggle"
       type="button"
       aria-label="Play"
-      class="grid size-9 shrink-0 place-items-center rounded-full bg-brand text-bg"
+      class="grid size-9 shrink-0 place-items-center rounded-full bg-ember text-bg"
     >
       <svg id="sp-icon-play" class="size-4" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
         <path d="M8 5v14l11-7Z" />
@@ -30,9 +35,9 @@
       id="sp-back"
       type="button"
       aria-label="Back 15 seconds"
-      class="hidden shrink-0 text-fg-muted transition-colors hover:text-accent sm:block"
+      class="hidden shrink-0 text-fg-muted transition-colors hover:text-ember sm:block"
     >
-      <span class="eyebrow">-15</span>
+      <span class="kicker">-15</span>
     </button>
 
     <div class="min-w-0 flex-1">
@@ -50,21 +55,21 @@
       id="sp-forward"
       type="button"
       aria-label="Forward 15 seconds"
-      class="hidden shrink-0 text-fg-muted transition-colors hover:text-accent sm:block"
+      class="hidden shrink-0 text-fg-muted transition-colors hover:text-ember sm:block"
     >
-      <span class="eyebrow">+15</span>
+      <span class="kicker">+15</span>
     </button>
 
     <button
       id="sp-speed"
       type="button"
       aria-label="Playback speed"
-      class="eyebrow hidden w-10 shrink-0 rounded-full border border-border py-1 text-center text-fg-muted transition-colors hover:border-accent hover:text-accent sm:block"
+      class="kicker hidden w-10 shrink-0 rounded-full border border-border py-1 text-center text-fg-muted transition-colors hover:border-ember hover:text-ember sm:block"
     >
       1&times;
     </button>
 
-    <button id="sp-close" type="button" aria-label="Close player" class="shrink-0 text-fg-muted hover:text-accent">
+    <button id="sp-close" type="button" aria-label="Close player" class="shrink-0 text-fg-muted hover:text-ember">
       <svg class="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
         <path d="M6 6l12 12M18 6L6 18" />
       </svg>
@@ -110,7 +115,7 @@
     heights.forEach((pct, i) => {
       const bar = document.createElement("span");
       const played = i / heights.length < progress;
-      bar.className = `w-[3px] rounded-full ${played ? "bg-brand" : "bg-border"}`;
+      bar.className = `w-[3px] rounded-full ${played ? "bg-ember" : "bg-border"}`;
       bar.style.height = `${pct}%`;
       bars.appendChild(bar);
     });

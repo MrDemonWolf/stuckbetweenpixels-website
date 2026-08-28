@@ -1,75 +1,175 @@
 ---
 import { getCollection } from "astro:content";
 import EpisodeCard from "../../components/EpisodeCard.astro";
+import StatsStrip from "../../components/StatsStrip.astro";
 import Layout from "../../layouts/Layout.astro";
-import { sortByDateDesc } from "../../lib/episodes";
+import {
+	allTags,
+	groupByYear,
+	sortByDateDesc,
+	tagsFor,
+} from "../../lib/episodes";
 
 const episodes = sortByDateDesc(await getCollection("episodes"));
+const years = groupByYear(episodes);
+const tags = allTags(episodes);
+
+// Episode numbers count down from the newest so the label is stable regardless
+// of how the client-side filter reorders rows.
+const numberFor = new Map(episodes.map((e, i) => [e.id, episodes.length - i]));
 ---
 
-<Layout title="Episodes — Stuck Between Pixels">
-  <section class="mx-auto max-w-3xl px-4 py-16 md:px-8">
-    <div class="flex flex-wrap items-end justify-between gap-4">
-      <h1 class="font-display text-4xl font-medium">Episodes</h1>
-      <div class="flex items-center gap-3">
-        <label class="sr-only" for="episode-search">Search episodes</label>
-        <input
-          id="episode-search"
-          type="search"
-          placeholder="Search episodes&hellip;"
-          class="rounded-full border border-border bg-surface px-4 py-2 text-sm text-fg placeholder:text-fg-muted focus:border-accent focus:outline-none"
-        />
-        <select
-          id="episode-sort"
-          class="eyebrow rounded-full border border-border bg-surface px-3 py-2 text-fg-muted focus:border-accent focus:outline-none"
-        >
-          <option value="desc">Newest</option>
-          <option value="asc">Oldest</option>
-        </select>
-      </div>
+<Layout
+  title="Episodes — Stuck Between Pixels"
+  description="Every episode of Stuck Between Pixels — web development, DevOps, and the business of building."
+>
+  <section class="border-b border-border">
+    <div class="mx-auto max-w-5xl px-4 pt-14 pb-10 md:px-8 md:pt-20">
+      <p class="kicker text-ember">The archive</p>
+      <h1 class="display mt-4 text-5xl md:text-7xl">Episodes</h1>
+      <StatsStrip entries={episodes} class="mt-8 border-t border-border pt-6" />
     </div>
+  </section>
 
-    <div id="episode-list" class="mt-10">
+  {/* Full-width so the sticky background spans the viewport instead of
+     painting a rectangle that stops at the container edge. */}
+  <div class="sticky top-[4.25rem] z-20 border-b border-border bg-bg/90 backdrop-blur">
+    <div class="mx-auto flex max-w-5xl flex-wrap items-center gap-3 px-4 py-4 md:px-8">
+      <label class="sr-only" for="episode-search">Search episodes</label>
+      <input
+        id="episode-search"
+        type="search"
+        placeholder="Search episodes&hellip;"
+        class="min-w-0 flex-1 rounded-full border border-border bg-surface px-4 py-2 text-sm text-fg placeholder:text-fg-muted"
+      />
+
       {
-        episodes.map((entry, i) => (
-          <div data-episode-row data-title={(entry.data as Record<string, unknown>).title}>
-            <EpisodeCard entry={entry} index={episodes.length - i} />
+        tags.length > 0 && (
+          <div class="flex flex-wrap gap-2" role="group" aria-label="Filter by topic">
+            <button
+              type="button"
+              data-tag=""
+              aria-pressed="true"
+              class="tag-filter kicker rounded-full border border-ember bg-ember px-3 py-1.5 text-on-ember"
+            >
+              All
+            </button>
+            {tags.map((tag) => (
+              <button
+                type="button"
+                data-tag={tag}
+                aria-pressed="false"
+                class="tag-filter kicker rounded-full border border-border px-3 py-1.5 text-fg-muted transition-colors hover:border-ember hover:text-ember"
+              >
+                {tag}
+              </button>
+            ))}
           </div>
+        )
+      }
+
+      <label class="sr-only" for="episode-sort">Sort episodes</label>
+      <select
+        id="episode-sort"
+        class="kicker rounded-full border border-border bg-surface px-3 py-2 text-fg-muted"
+      >
+        <option value="desc">Newest</option>
+        <option value="asc">Oldest</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="mx-auto max-w-5xl px-4 md:px-8">
+    <div id="episode-list" class="pb-16">
+      {
+        years.map(([year, yearEpisodes]) => (
+          <section data-year-group={year}>
+            <h2 class="display mt-12 mb-2 text-2xl text-fg-muted first:mt-8">{year}</h2>
+            {yearEpisodes.map((entry) => (
+              <div
+                data-episode-row
+                data-title={(entry.data as Record<string, unknown>).title}
+                data-tags={tagsFor(entry).join("|")}
+              >
+                <EpisodeCard entry={entry} index={numberFor.get(entry.id)} />
+              </div>
+            ))}
+          </section>
         ))
       }
     </div>
-    <p id="episode-empty" class="hidden py-12 text-center text-fg-muted">
-      No episodes match "<span id="episode-empty-query"></span>".
+
+    <p id="episode-empty" class="hidden pb-16 text-center text-fg-muted">
+      No episodes match that search.
     </p>
-  </section>
+  </div>
 </Layout>
 
 <script>
-  const search = document.getElementById("episode-search") as HTMLInputElement;
-  const sort = document.getElementById("episode-sort") as HTMLSelectElement;
-  const list = document.getElementById("episode-list") as HTMLDivElement;
-  const empty = document.getElementById("episode-empty") as HTMLParagraphElement;
-  const emptyQuery = document.getElementById("episode-empty-query") as HTMLSpanElement;
+  function initArchive() {
+    const search = document.getElementById("episode-search") as HTMLInputElement | null;
+    const sort = document.getElementById("episode-sort") as HTMLSelectElement | null;
+    const list = document.getElementById("episode-list");
+    const empty = document.getElementById("episode-empty");
+    if (!search || !sort || !list || !empty) return;
 
-  // Server renders newest-first — that's the one true order rows come in.
-  const rowsDesc = Array.from(list.querySelectorAll<HTMLDivElement>("[data-episode-row]"));
+    const groups = Array.from(list.querySelectorAll<HTMLElement>("[data-year-group]"));
+    const filters = Array.from(document.querySelectorAll<HTMLButtonElement>(".tag-filter"));
+    // Server order is newest-first; keep it as the reference for re-sorting.
+    const rowsByGroup = new Map(
+      groups.map((g) => [g, Array.from(g.querySelectorAll<HTMLElement>("[data-episode-row]"))]),
+    );
+    let activeTag = "";
 
-  function apply() {
-    const query = search.value.trim().toLowerCase();
-    const rows = sort.value === "asc" ? [...rowsDesc].reverse() : rowsDesc;
-    let visible = 0;
+    function apply() {
+      const query = search!.value.trim().toLowerCase();
+      const asc = sort!.value === "asc";
+      let visible = 0;
 
-    for (const row of rows) {
-      const match = (row.dataset.title ?? "").toLowerCase().includes(query);
-      row.classList.toggle("hidden", !match);
-      if (match) visible++;
-      list.appendChild(row);
+      const ordered = asc ? [...groups].reverse() : groups;
+      for (const group of ordered) {
+        const rows = rowsByGroup.get(group) ?? [];
+        let groupVisible = 0;
+
+        for (const row of asc ? [...rows].reverse() : rows) {
+          const title = (row.dataset.title ?? "").toLowerCase();
+          const tags = (row.dataset.tags ?? "").split("|").filter(Boolean);
+          const match =
+            title.includes(query) && (activeTag === "" || tags.includes(activeTag));
+          row.classList.toggle("hidden", !match);
+          if (match) groupVisible++;
+          group.appendChild(row);
+        }
+
+        // Hide the year header when nothing under it survived the filter.
+        group.classList.toggle("hidden", groupVisible === 0);
+        visible += groupVisible;
+        list!.appendChild(group);
+      }
+
+      empty!.classList.toggle("hidden", visible !== 0);
     }
 
-    empty.classList.toggle("hidden", visible !== 0);
-    emptyQuery.textContent = search.value;
+    for (const btn of filters) {
+      btn.addEventListener("click", () => {
+        activeTag = btn.dataset.tag ?? "";
+        for (const other of filters) {
+          const on = other === btn;
+          other.setAttribute("aria-pressed", String(on));
+          other.classList.toggle("bg-ember", on);
+          other.classList.toggle("border-ember", on);
+          other.classList.toggle("text-on-ember", on);
+          other.classList.toggle("border-border", !on);
+          other.classList.toggle("text-fg-muted", !on);
+        }
+        apply();
+      });
+    }
+
+    search.addEventListener("input", apply);
+    sort.addEventListener("change", apply);
   }
 
-  search.addEventListener("input", apply);
-  sort.addEventListener("change", apply);
+  initArchive();
+  document.addEventListener("astro:page-load", initArchive);
 </script>
