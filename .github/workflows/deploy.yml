@@ -39,6 +39,8 @@ jobs:
       - uses: withastro/action@v3
         with:
           package-manager: bun@latest
+          # The action defaults to Node 20; Astro 7 requires >=22.12.0.
+          node-version: 22
         env:
           PREVIEW_DEPLOY: ${{ env.PREVIEW_DEPLOY }}
           PODCAST_RSS_URL: ${{ vars.PODCAST_RSS_URL }}
