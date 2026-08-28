@@ -21,6 +21,8 @@ const number = episodeNumberFor(entry);
 const duration = durationFor(entry);
 const audioUrl = audioUrlFor(entry);
 const hasArtwork = hasArtworkFor(entry);
+
+import { url } from "../lib/url";
 ---
 
 <section class="mx-auto max-w-5xl px-4 py-16 md:px-8">
@@ -53,7 +55,7 @@ const hasArtwork = hasArtworkFor(entry);
     </div>
 
     <div>
-      <a href={`/episodes/${slugFor(entry)}`}>
+      <a href={url(`/episodes/${slugFor(entry)}`)}>
         <h2 class="font-display text-2xl font-medium transition-colors hover:text-brand md:text-3xl">
           {data.title as string}
         </h2>
@@ -83,14 +85,14 @@ const hasArtwork = hasArtworkFor(entry);
             </button>
           ) : (
             <a
-              href={`/episodes/${slugFor(entry)}`}
+              href={url(`/episodes/${slugFor(entry)}`)}
               class="eyebrow inline-flex items-center gap-2 rounded-full bg-brand px-5 py-2.5 text-bg transition-opacity hover:opacity-90"
             >
               Listen
             </a>
           )
         }
-        <a href={`/episodes/${slugFor(entry)}`} class="text-sm text-brand hover:underline">
+        <a href={url(`/episodes/${slugFor(entry)}`)} class="text-sm text-brand hover:underline">
           Show notes &rarr;
         </a>
       </div>

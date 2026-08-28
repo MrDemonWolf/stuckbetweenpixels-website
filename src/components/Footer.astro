@@ -2,6 +2,8 @@
 import SubscribeRow from "./SubscribeRow.astro";
 
 const year = new Date().getFullYear();
+
+import { url } from "../lib/url";
 ---
 
 <footer class="mt-16 border-t border-border">
@@ -9,8 +11,8 @@ const year = new Date().getFullYear();
     <SubscribeRow />
     <div class="eyebrow flex flex-col gap-2 text-fg-muted md:flex-row md:items-center md:gap-4">
       <p>&copy; {year} Stuck Between Pixels</p>
-      <a href="/legal" class="hover:text-accent">Privacy</a>
-      <a href="/terms" class="hover:text-accent">Terms</a>
+      <a href={url("/legal")} class="hover:text-accent">Privacy</a>
+      <a href={url("/terms")} class="hover:text-accent">Terms</a>
     </div>
   </div>
 </footer>

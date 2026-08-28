@@ -47,6 +47,8 @@ const schema = {
 		? { associatedMedia: { "@type": "AudioObject", contentUrl: audioUrl } }
 		: {}),
 };
+
+import { url } from "../../lib/url";
 ---
 
 <Layout
@@ -95,7 +97,7 @@ const schema = {
       </div>
     </div>
 
-    <a href="/episodes" class="mt-8 inline-block text-brand hover:underline">
+    <a href={url("/episodes")} class="mt-8 inline-block text-brand hover:underline">
       &larr; All episodes
     </a>
   </article>

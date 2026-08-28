@@ -8,11 +8,13 @@ const links = [
 	{ to: "/episodes", label: "Episodes" },
 	{ to: "/about", label: "About" },
 ];
+
+import { url } from "../lib/url";
 ---
 
 <header class="border-b border-border">
   <div class="mx-auto flex max-w-5xl items-center justify-between px-4 py-5 md:px-8">
-    <a href="/" class="flex items-center gap-2">
+    <a href={url("/")} class="flex items-center gap-2">
       {/* Dark mode gets a light-outline variant — the mark's dark-violet edge
          nearly disappears against the near-black page background otherwise. */}
       <img src={LogoMark.src} alt="Stuck Between Pixels" class="h-8 w-auto dark:hidden" />
@@ -27,7 +29,7 @@ const links = [
       <nav class="eyebrow flex gap-6 text-fg-muted">
         {
           links.map((link) => (
-            <a href={link.to} class="transition-colors hover:text-accent">
+            <a href={url(link.to)} class="transition-colors hover:text-accent">
               {link.label}
             </a>
           ))

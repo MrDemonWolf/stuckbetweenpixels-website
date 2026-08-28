@@ -75,9 +75,11 @@
 </div>
 
 <script>
+  import { url } from "../lib/url";
   import { waveformHeights } from "../lib/waveform";
 
   const SPEEDS = [1, 1.25, 1.5, 2];
+  const FALLBACK_ARTWORK = url("/favicon.png");
 
   const root = document.getElementById("sticky-player") as HTMLDivElement;
   const audio = document.getElementById("sp-audio") as HTMLAudioElement;
@@ -126,7 +128,7 @@
   function load(detail: { id: string; title: string; audioUrl: string; artwork?: string }) {
     currentId = detail.id;
     title.textContent = detail.title;
-    artwork.src = detail.artwork ?? "/favicon.png";
+    artwork.src = detail.artwork ?? FALLBACK_ARTWORK;
     audio.src = detail.audioUrl;
     audio.playbackRate = SPEEDS[speedIndex];
     root.dataset.open = "";

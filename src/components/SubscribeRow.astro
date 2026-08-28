@@ -1,4 +1,6 @@
 ---
+import { url } from "../lib/url";
+
 // ponytail: real Apple/Spotify show URLs go here once the show is live on both.
 const links = [
 	{
@@ -11,7 +13,7 @@ const links = [
 		href: import.meta.env.PODCAST_APPLE_URL || "https://podcasts.apple.com",
 		icon: "apple",
 	},
-	{ label: "RSS", href: "/rss.xml", icon: "rss" },
+	{ label: "RSS", href: url("/rss.xml"), icon: "rss" },
 ] as const;
 ---
 

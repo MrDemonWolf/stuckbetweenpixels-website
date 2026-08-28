@@ -2,6 +2,7 @@
 import { Image } from "astro:assets";
 import hosts from "../assets/brand/hero-podcast-hosts.png";
 import { hosts as hostData } from "../data/hosts";
+import { url } from "../lib/url";
 import SubscribeRow from "./SubscribeRow.astro";
 ---
 
@@ -34,7 +35,7 @@ import SubscribeRow from "./SubscribeRow.astro";
 
       <div class="mt-8 flex flex-wrap items-center gap-4">
         <a
-          href="/episodes"
+          href={url("/episodes")}
           class="eyebrow inline-flex items-center gap-2 rounded-full bg-brand px-5 py-2.5 text-bg transition-opacity hover:opacity-90"
         >
           <svg class="size-4" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
@@ -42,7 +43,7 @@ import SubscribeRow from "./SubscribeRow.astro";
           </svg>
           Start listening
         </a>
-        <a href="/about" class="flex items-center -space-x-2">
+        <a href={url("/about")} class="flex items-center -space-x-2">
           {
             hostData.map((host) => (
               <Image

@@ -1,4 +1,5 @@
 import type { CollectionEntry } from "astro:content";
+import { url } from "./url";
 
 /** Feed items and the sample JSON both have unstable/URL-ish ids — make a safe route slug. */
 export function slugFor(entry: CollectionEntry<"episodes">) {
@@ -44,7 +45,7 @@ export function hasArtworkFor(entry: CollectionEntry<"episodes">) {
 /** Falls back to the site mark so cards/players never render a broken image. */
 export function artworkFor(entry: CollectionEntry<"episodes">) {
 	const data = entry.data as EpisodeData;
-	return (data.image as string | undefined) ?? "/favicon.png";
+	return url((data.image as string | undefined) ?? "/favicon.png");
 }
 
 export function audioUrlFor(entry: CollectionEntry<"episodes">) {

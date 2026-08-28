@@ -73,10 +73,33 @@ and can be triggered manually from the Actions tab.
 
 Repo Settings → Pages → Source must be **GitHub Actions** (one-time setup).
 
+## Preview vs production builds
+
+`stuckbetweenpixels.com` still serves the old WordPress site, so deploys
+currently go to the GitHub Pages **project URL**:
+
+<https://mrdemonwolf.github.io/stuckbetweenpixels-website/>
+
+That build sets `PREVIEW_DEPLOY=1`, which switches `astro.config.mjs` to a
+`base` of `/stuckbetweenpixels-website` and drops `public/CNAME` so GitHub
+doesn't claim the production domain. Every internal link goes through
+`url()` in `src/lib/url.ts` so both modes work — use it for any new
+hardcoded `/path` link or `public/` asset reference.
+
+Build either mode locally:
+
+```bash
+bun run build                    # production (stuckbetweenpixels.com)
+PREVIEW_DEPLOY=1 bun run build   # project-URL preview
+```
+
 ## Custom domain cutover
 
 `public/CNAME` already points at `stuckbetweenpixels.com`. To go live:
 
+0. Set `PREVIEW_DEPLOY: "0"` in `.github/workflows/deploy.yml` — that restores
+   the production `site`, drops the `base`, and stops the workflow deleting
+   `public/CNAME`.
 1. DNS (apex `A` records) → `185.199.108.153`, `185.199.109.153`,
    `185.199.110.153`, `185.199.111.153`
    (`AAAA` → `2606:50c0:8000::153` … `2606:50c0:8003::153`)

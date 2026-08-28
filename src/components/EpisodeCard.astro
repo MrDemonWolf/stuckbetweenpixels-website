@@ -22,6 +22,8 @@ const duration = durationFor(entry);
 const number = episodeNumberFor(entry) ?? index;
 const audioUrl = audioUrlFor(entry);
 const hasArtwork = hasArtworkFor(entry);
+
+import { url } from "../lib/url";
 ---
 
 <div
@@ -68,7 +70,7 @@ const hasArtwork = hasArtworkFor(entry);
       }
     </div>
 
-    <a href={`/episodes/${slugFor(entry)}`} class="min-w-0">
+    <a href={url(`/episodes/${slugFor(entry)}`)} class="min-w-0">
       <h3 class="font-display text-xl transition-colors group-hover:text-brand md:text-2xl">
         {data.title as string}
       </h3>

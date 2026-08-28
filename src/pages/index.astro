@@ -27,6 +27,8 @@ const schema = {
 	webFeed: new URL("/rss.xml", site).href,
 	author: hosts.map((host) => ({ "@type": "Person", name: host.name })),
 };
+
+import { url } from "../lib/url";
 ---
 
 <Layout schema={schema}>
@@ -43,7 +45,7 @@ const schema = {
             <EpisodeCard entry={entry} index={episodes.length - 1 - i} />
           ))}
         </div>
-        <a href="/episodes" class="mt-6 inline-block text-brand hover:underline">
+        <a href={url("/episodes")} class="mt-6 inline-block text-brand hover:underline">
           All episodes &rarr;
         </a>
       </section>

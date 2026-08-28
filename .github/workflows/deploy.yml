@@ -17,15 +17,30 @@ concurrency:
   group: "pages"
   cancel-in-progress: false
 
+env:
+  # 1 = build for the mrdemonwolf.github.io/stuckbetweenpixels-website/ project
+  # URL. Flip to 0 at the real cutover, once DNS points at GitHub Pages — see
+  # "Custom domain cutover" in README.md.
+  PREVIEW_DEPLOY: "1"
+
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+
+      # The repo ships public/CNAME for the eventual custom-domain cutover.
+      # Publishing it while previewing would make GitHub claim a domain that
+      # still serves the old WordPress site, so drop it from preview builds.
+      - name: Drop CNAME for preview deploys
+        if: env.PREVIEW_DEPLOY == '1'
+        run: rm -f public/CNAME
+
       - uses: withastro/action@v3
         with:
           package-manager: bun@latest
         env:
+          PREVIEW_DEPLOY: ${{ env.PREVIEW_DEPLOY }}
           PODCAST_RSS_URL: ${{ vars.PODCAST_RSS_URL }}
           PODCAST_SPOTIFY_URL: ${{ vars.PODCAST_SPOTIFY_URL }}
           PODCAST_APPLE_URL: ${{ vars.PODCAST_APPLE_URL }}
