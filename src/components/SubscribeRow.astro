@@ -1,4 +1,5 @@
 ---
+import spotifyLogo from "../assets/brand/platforms/spotify.svg";
 import { url } from "../lib/url";
 
 // ponytail: real Apple/Spotify show URLs go here once the show is live on both.
@@ -24,10 +25,10 @@ const links = [
         href={link.href}
         class="kicker inline-flex items-center gap-2 rounded-full border border-border px-4 py-2 text-fg transition-colors hover:border-ember hover:text-ember"
       >
+        {/* Official Spotify mark in its brand green, which their guidelines
+           require (green, black, or white only — no recolouring). */}
         {link.icon === "spotify" && (
-          <svg class="size-4" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-            <path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20Zm4.59 14.42a.62.62 0 0 1-.86.21c-2.36-1.44-5.33-1.77-8.84-.97a.62.62 0 1 1-.28-1.22c3.84-.88 7.14-.5 9.77 1.11.3.19.4.58.21.87Zm1.22-2.72a.78.78 0 0 1-1.07.26c-2.7-1.66-6.82-2.14-10.02-1.17a.78.78 0 1 1-.45-1.49c3.65-1.11 8.19-.57 11.28 1.33.37.23.5.72.26 1.07Zm.1-2.83c-3.24-1.92-8.6-2.1-11.7-1.16a.94.94 0 1 1-.55-1.79c3.56-1.08 9.47-.87 13.2 1.35a.94.94 0 0 1-.95 1.6Z" />
-          </svg>
+          <img src={spotifyLogo.src} alt="" class="size-4 shrink-0" />
         )}
         {/* Deliberately a generic microphone, not Apple's mark. Apple's identity
            guidelines require their supplied badge artwork and forbid drawing

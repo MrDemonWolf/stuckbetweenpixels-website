@@ -12,16 +12,20 @@ const links = [
 ---
 
 <header class="sticky top-0 z-30 border-b border-border bg-bg/85 backdrop-blur">
-  <div class="mx-auto flex max-w-5xl items-center justify-between px-4 py-4 md:px-8">
-    <a href={url("/")} class="flex items-center gap-2.5">
+  <div class="mx-auto flex max-w-5xl items-center justify-between gap-3 px-4 py-4 md:px-8">
+    <a href={url("/")} class="flex shrink-0 items-center gap-2.5">
       {/* The mark's linework is ink on paper and bone on charcoal — swap the
          variant rather than letting one of them vanish into the background. */}
-      <img src={LogoMark.src} alt="" class="h-9 w-auto dark:hidden" />
-      <img src={LogoMarkDark.src} alt="" class="hidden h-9 w-auto dark:block" />
-      <span class="display-tight text-lg">Stuck Between Pixels</span>
+      <img src={LogoMark.src} alt="Stuck Between Pixels" class="h-9 w-auto dark:hidden" />
+      <img src={LogoMarkDark.src} alt="Stuck Between Pixels" class="hidden h-9 w-auto dark:block" />
+      {/* Hidden on phones: the wordmark, nav, and toggle don't fit together at
+         390px, and it wrapped to three lines. The mark alone carries it. */}
+      <span class="display-tight hidden text-lg whitespace-nowrap sm:inline">
+        Stuck Between Pixels
+      </span>
     </a>
-    <div class="flex items-center gap-6">
-      <nav class="kicker flex gap-6 text-fg-muted">
+    <div class="flex items-center gap-4 sm:gap-6">
+      <nav class="kicker flex gap-4 text-fg-muted sm:gap-6">
         {
           links.map((link) => (
             <a href={url(link.to)} class="transition-colors hover:text-ember">

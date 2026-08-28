@@ -44,7 +44,10 @@ const numberFor = new Map(episodes.map((e, i) => [e.id, episodes.length - i]));
      painting a rectangle that stops at the container edge. */}
   <div
     class:list={[
-      "sticky top-[4.25rem] z-20 border-b border-border bg-bg/90 backdrop-blur",
+      // Only sticky from sm up: on a phone the wrapped filter row is ~180px
+      // tall, which together with the sticky header would pin a third of the
+      // viewport permanently.
+      "z-20 border-b border-border bg-bg/90 backdrop-blur sm:sticky sm:top-[4.25rem]",
       episodes.length === 0 && "hidden",
     ]}
   >

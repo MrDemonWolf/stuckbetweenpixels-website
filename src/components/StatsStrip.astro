@@ -28,13 +28,16 @@ const stats = [
 ];
 ---
 
-<dl class:list={["flex flex-wrap items-stretch", className]}>
+{/* A 2x2 grid on phones: flex-wrap orphaned the last item onto its own row
+   while it kept the divider rule, which read as a misaligned stray. The
+   dividers only make sense once the stats sit on one line. */}
+<dl class:list={["grid grid-cols-2 gap-x-8 gap-y-5 sm:flex sm:items-stretch sm:gap-0", className]}>
   {
     stats.map((stat, i) => (
       <div
         class:list={[
-          "flex flex-col justify-center pr-6 md:pr-8",
-          i > 0 && "border-l border-border pl-6 md:pl-8",
+          "flex flex-col justify-center sm:pr-6 md:pr-8",
+          i > 0 && "sm:border-l sm:border-border sm:pl-6 md:pl-8",
         ]}
       >
         <dt class="kicker order-2 mt-1 text-fg-muted">{stat.label}</dt>
