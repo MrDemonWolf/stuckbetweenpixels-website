@@ -1,0 +1,60 @@
+---
+// Source for the social-share card. Screenshot this at exactly 1200x630 and
+// save it over src/assets/brand/default-social-share.jpg — rendering it here
+// means the card uses the real brand fonts and tokens instead of an
+// approximation composed outside the design system.
+// Excluded from the sitemap in astro.config.mjs and noindexed.
+import { Image } from "astro:assets";
+import hosts from "../assets/brand/hero-podcast-hosts.png";
+import LogoMarkDark from "../assets/brand/logo-mark-dark.svg";
+import "../styles/global.css";
+---
+
+<!doctype html>
+<html lang="en" data-theme="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="robots" content="noindex, nofollow" />
+    <title>OG template</title>
+  </head>
+  <body class="font-sans">
+    <div
+      id="og-card"
+      class="relative overflow-hidden bg-bg"
+      style="width: 1200px; height: 630px;"
+    >
+      {/* Full-bleed art, biased upward so the hosts' faces survive the crop —
+         a narrow side panel cropped to the dark gap between them. */}
+      <Image
+        src={hosts}
+        alt=""
+        width={1400}
+        class="absolute inset-0 h-full w-full object-cover"
+        style="object-position: 62% 22%;"
+      />
+      <div
+        class="absolute inset-0"
+        style="background: linear-gradient(100deg, var(--color-bg) 0%, var(--color-bg) 46%, rgb(14 11 10 / 0.82) 62%, rgb(14 11 10 / 0.35) 100%);"
+      >
+      </div>
+
+      <div class="relative z-10 flex h-full w-[62%] flex-col justify-center px-14">
+        <div class="flex items-center gap-3">
+          <img src={LogoMarkDark.src} alt="" class="h-14 w-auto" />
+          <span class="kicker text-fg-muted">Podcast</span>
+        </div>
+
+        <h1 class="display mt-7 text-[64px] leading-[0.92] text-fg">
+          Stuck<br />Between<br /><span class="text-ember">Pixels</span>
+        </h1>
+
+        <p class="mt-7 max-w-sm text-[19px] leading-snug text-fg-muted">
+          Web development, DevOps, and the business skills that actually move a
+          tech career forward.
+        </p>
+
+        <p class="kicker mt-7 text-fg-muted">stuckbetweenpixels.com</p>
+      </div>
+    </div>
+  </body>
+</html>

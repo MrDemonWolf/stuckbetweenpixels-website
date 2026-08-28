@@ -11,10 +11,14 @@ const { entries, class: className = "" } = Astro.props;
 const hours = totalRuntimeHours(entries);
 
 const stats = [
-	{
-		value: String(entries.length).padStart(2, "0"),
-		label: entries.length === 1 ? "Episode" : "Episodes",
-	},
+	// Before launch there are no episodes — "00 Episodes" reads as broken, so
+	// lead with the launch state instead.
+	entries.length === 0
+		? { value: "Soon", label: "First episode" }
+		: {
+				value: String(entries.length).padStart(2, "0"),
+				label: entries.length === 1 ? "Episode" : "Episodes",
+			},
 	// Hide runtime until there's at least an hour — "0 hrs" reads as broken.
 	...(hours > 0
 		? [{ value: `${hours}`, label: hours === 1 ? "Hour" : "Hours" }]

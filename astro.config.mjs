@@ -20,7 +20,10 @@ export default defineConfig({
 		"/privacy": "/legal",
 	},
 	integrations: [
-		sitemap({ filter: (page) => !page.includes("/design-system") }),
+		sitemap({
+			filter: (page) =>
+				!page.includes("/design-system") && !page.includes("/og-template"),
+		}),
 	],
 	vite: {
 		plugins: [tailwindcss()],

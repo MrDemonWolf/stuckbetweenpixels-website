@@ -1,5 +1,6 @@
 ---
 import { getCollection } from "astro:content";
+import ComingSoon from "../components/ComingSoon.astro";
 import EpisodeCard from "../components/EpisodeCard.astro";
 import FeaturedEpisode from "../components/FeaturedEpisode.astro";
 import Hero from "../components/Hero.astro";
@@ -35,8 +36,20 @@ const schema = {
 };
 ---
 
-<Layout schema={schema}>
+<Layout
+  title="Stuck Between Pixels — Web Dev, DevOps & Business Podcast"
+  description="Nathanial Henniges and Stephan Moerman talk with industry experts about web development, DevOps, and the business skills that actually move a tech career forward. New episodes every other week."
+  schema={schema}
+>
   <Hero entries={episodes} />
+
+  {
+    episodes.length === 0 && (
+      <Section width="wide">
+        <ComingSoon />
+      </Section>
+    )
+  }
 
   {
     latest && (

@@ -4,12 +4,19 @@ import { file } from "astro/loaders";
 
 const rssUrl = import.meta.env.PODCAST_RSS_URL;
 
-// ponytail: show isn't published yet — sample data keeps every page rendering
-// until PODCAST_RSS_URL exists. Set it in .env / repo variables when it does.
+// Placeholder episodes are opt-in. With no feed and demo content off, the
+// collection is empty on purpose and every surface falls back to its
+// "coming soon" state — see SHOW_DEMO_EPISODES in README.md.
+// Defaults to on so a fresh clone still renders something.
+const showDemo = import.meta.env.SHOW_DEMO_EPISODES !== "false";
+
+function loader() {
+	if (rssUrl) return feedLoader({ url: rssUrl });
+	return file(
+		showDemo ? "src/data/episodes.sample.json" : "src/data/episodes.empty.json",
+	);
+}
+
 export const collections = {
-	episodes: defineCollection({
-		loader: rssUrl
-			? feedLoader({ url: rssUrl })
-			: file("src/data/episodes.sample.json"),
-	}),
+	episodes: defineCollection({ loader: loader() }),
 };

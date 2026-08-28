@@ -6,10 +6,15 @@ export const hosts = [
 		slug: "nathanial-henniges",
 		name: "Nathanial Henniges",
 		photo: nathanial,
-		role: "Entrepreneur & WordPress developer",
-		bio: "Founder and CEO of MrDemonWolf, Inc., a Wisconsin web services business on the Wisconsin/Illinois border. Nathanial builds WordPress sites for local businesses and start-ups, and has grown from freelance web developer into a full-stack engineer along the way.",
+		role: "Founding engineer at Kommit",
+		// Sourced from LinkedIn + the mrdemonwolf/website copy (Aug 2026). Leads
+		// with Kommit (the current full-time role); MrDemonWolf, Inc. is the
+		// S-Corp that publishes this show, so it stays named rather than framed
+		// as a side project. Title there is President, not "Founder and CEO".
+		bio: "Developer in Beloit, Wisconsin, building on the web since 2012. Founding engineer at Kommit, and president of MrDemonWolf, Inc., the Wisconsin S-Corp he incorporated in 2022 and the home for his own work: WordPress sites, TypeScript apps, and a pile of open-source tools built in public.",
 		links: [
 			{ label: "Website", href: "https://www.mrdemonwolf.com" },
+			{ label: "GitHub", href: "https://github.com/MrDemonWolf" },
 			{
 				label: "LinkedIn",
 				href: "https://www.linkedin.com/in/nathan-jk-henniges/",

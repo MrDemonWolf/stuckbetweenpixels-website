@@ -56,6 +56,38 @@ needed. Copy an existing entry and fill in:
 Once `PODCAST_RSS_URL` is set (see below), the feed takes over and this file
 stops being read.
 
+## Demo episodes vs "coming soon"
+
+Placeholder episodes are on by default so a fresh clone renders something. To
+show the pre-launch state instead, build with:
+
+```bash
+SHOW_DEMO_EPISODES=false bun run build
+```
+
+The collection then loads `src/data/episodes.empty.json`, and the homepage and
+`/episodes` both fall back to the `ComingSoon` block. Setting `PODCAST_RSS_URL`
+overrides this entirely: the real feed always wins.
+
+Set `SHOW_DEMO_EPISODES` as a repo variable to control what deploys.
+
+## Apple Podcasts badge
+
+The subscribe row uses a generic microphone glyph for the Apple link, not
+Apple's mark. Apple's identity guidelines require their supplied badge artwork
+and forbid drawing your own. To use the real badge, download it from
+<https://marketing.services.apple/apple-podcasts-identity-guidelines> and swap
+it into `SubscribeRow.astro`. Note the official asset is a full "Listen on
+Apple Podcasts" lockup, so it needs its own treatment rather than dropping into
+the existing pill row.
+
+## Social share image
+
+`src/assets/brand/default-social-share.jpg` is generated from the `/og-template`
+route so the card uses the real brand fonts. To regenerate: run the dev server,
+open `/og-template`, screenshot the `#og-card` element, and save it over that
+file at 1200x630. The route is noindexed and excluded from the sitemap.
+
 ## Point it at the real podcast feed
 
 Once the show is live on Spotify for Creators:

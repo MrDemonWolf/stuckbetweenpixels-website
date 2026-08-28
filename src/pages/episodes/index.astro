@@ -1,5 +1,6 @@
 ---
 import { getCollection } from "astro:content";
+import ComingSoon from "../../components/ComingSoon.astro";
 import EpisodeCard from "../../components/EpisodeCard.astro";
 import StatsStrip from "../../components/StatsStrip.astro";
 import Layout from "../../layouts/Layout.astro";
@@ -20,8 +21,8 @@ const numberFor = new Map(episodes.map((e, i) => [e.id, episodes.length - i]));
 ---
 
 <Layout
-  title="Episodes — Stuck Between Pixels"
-  description="Every episode of Stuck Between Pixels — web development, DevOps, and the business of building."
+  title="All Episodes — Stuck Between Pixels"
+  description="Browse every episode of Stuck Between Pixels. Conversations on web development, DevOps, WordPress, and the business side of building software."
 >
   <section class="border-b border-border">
     <div class="mx-auto max-w-5xl px-4 pt-14 pb-10 md:px-8 md:pt-20">
@@ -31,9 +32,22 @@ const numberFor = new Map(episodes.map((e, i) => [e.id, episodes.length - i]));
     </div>
   </section>
 
+  {
+    episodes.length === 0 && (
+      <div class="mx-auto max-w-3xl px-4 py-16 md:px-8">
+        <ComingSoon compact />
+      </div>
+    )
+  }
+
   {/* Full-width so the sticky background spans the viewport instead of
      painting a rectangle that stops at the container edge. */}
-  <div class="sticky top-[4.25rem] z-20 border-b border-border bg-bg/90 backdrop-blur">
+  <div
+    class:list={[
+      "sticky top-[4.25rem] z-20 border-b border-border bg-bg/90 backdrop-blur",
+      episodes.length === 0 && "hidden",
+    ]}
+  >
     <div class="mx-auto flex max-w-5xl flex-wrap items-center gap-3 px-4 py-4 md:px-8">
       <label class="sr-only" for="episode-search">Search episodes</label>
       <input
