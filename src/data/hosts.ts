@@ -20,10 +20,14 @@ export const hosts = [
 		slug: "stephan-moerman",
 		name: "Stephan Moerman",
 		photo: stephan,
-		role: "Entrepreneur & Digital Marketing Expert",
-		bio: "Founder and CEO of Bakklog, a digital marketing agency based in Rotterdam and Miami. Through SEO and custom web development, Bakklog has spent 5+ years helping SMBs and start-ups get the exposure their companies deserve, using a discovery process built around each client's core DNA before building their online strategy.",
+		role: "Founder of Kommit",
+		// Sourced from moerman.dev (Aug 2026). The previous bio here was wrong:
+		// he was Bakklog's part-time CTO from 2016–2026, not its founder/CEO,
+		// and that chapter closed when he went full-time on Kommit.
+		bio: "Founder of Kommit, the enterprise AI control plane teams use to design, monitor, and audit governed AI workflows in production. Based in the Netherlands. Previously spent a decade as a fractional CTO across SaaS, healthcare, fintech, and other regulated industries, alongside a part-time CTO role at Bakklog. Also co-founder and CTO of ShareShift, and on the DeveloperWeek Europe advisory board.",
 		links: [
-			{ label: "Website", href: "https://www.bakklog.com/" },
+			{ label: "Website", href: "https://moerman.dev/" },
+			{ label: "Kommit", href: "https://getkommit.ai" },
 			{
 				label: "LinkedIn",
 				href: "https://www.linkedin.com/in/stephan-moerman/",
