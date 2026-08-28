@@ -23,37 +23,40 @@ import "../styles/global.css";
       class="relative overflow-hidden bg-bg"
       style="width: 1200px; height: 630px;"
     >
-      {/* Full-bleed art, biased upward so the hosts' faces survive the crop —
-         a narrow side panel cropped to the dark gap between them. */}
+      {/* Art spans the full width so BOTH hosts are in frame; the text sits in
+         a scrim across the bottom rather than a side panel, which covered the
+         left host entirely. Biased upward to keep faces above the scrim. */}
       <Image
         src={hosts}
         alt=""
         width={1400}
         class="absolute inset-0 h-full w-full object-cover"
-        style="object-position: 62% 22%;"
+        style="object-position: 50% 12%;"
       />
       <div
         class="absolute inset-0"
-        style="background: linear-gradient(100deg, var(--color-bg) 0%, var(--color-bg) 46%, rgb(14 11 10 / 0.82) 62%, rgb(14 11 10 / 0.35) 100%);"
+        style="background: linear-gradient(to top, var(--color-bg) 0%, var(--color-bg) 30%, rgb(14 11 10 / 0.86) 44%, rgb(14 11 10 / 0.12) 68%);"
       >
       </div>
 
-      <div class="relative z-10 flex h-full w-[62%] flex-col justify-center px-14">
-        <div class="flex items-center gap-3">
-          <img src={LogoMarkDark.src} alt="" class="h-14 w-auto" />
-          <span class="kicker text-fg-muted">Podcast</span>
+      <div class="absolute inset-x-0 bottom-0 z-10 flex items-end justify-between px-14 pb-11">
+        <div>
+          <div class="flex items-center gap-3">
+            <img src={LogoMarkDark.src} alt="" class="h-11 w-auto" />
+            <span class="kicker text-ember">Podcast</span>
+          </div>
+
+          <h1 class="display mt-4 text-[62px] leading-[0.95] text-fg">
+            Stuck Between <span class="text-ember">Pixels</span>
+          </h1>
+
+          <p class="mt-4 max-w-xl text-[20px] leading-snug text-fg-muted">
+            Web development, DevOps, and the business skills that actually move a
+            tech career forward.
+          </p>
         </div>
 
-        <h1 class="display mt-7 text-[64px] leading-[0.92] text-fg">
-          Stuck<br />Between<br /><span class="text-ember">Pixels</span>
-        </h1>
-
-        <p class="mt-7 max-w-sm text-[19px] leading-snug text-fg-muted">
-          Web development, DevOps, and the business skills that actually move a
-          tech career forward.
-        </p>
-
-        <p class="kicker mt-7 text-fg-muted">stuckbetweenpixels.com</p>
+        <p class="kicker shrink-0 pb-2 text-fg-muted">stuckbetweenpixels.com</p>
       </div>
     </div>
   </body>
