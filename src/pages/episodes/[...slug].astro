@@ -1,0 +1,102 @@
+---
+import { getCollection } from "astro:content";
+import HostStrip from "../../components/HostStrip.astro";
+import Player from "../../components/Player.astro";
+import Layout from "../../layouts/Layout.astro";
+import {
+	artworkFor,
+	audioUrlFor,
+	durationFor,
+	episodeNumberFor,
+	formatDate,
+	hasArtworkFor,
+	slugFor,
+} from "../../lib/episodes";
+
+export async function getStaticPaths() {
+	const episodes = await getCollection("episodes");
+	return episodes.map((entry) => ({
+		params: { slug: slugFor(entry) },
+		props: { entry },
+	}));
+}
+
+const { entry } = Astro.props;
+const data = entry.data as Record<string, unknown>;
+const duration = durationFor(entry);
+const audioUrl = audioUrlFor(entry);
+
+const site = Astro.site ?? new URL("https://stuckbetweenpixels.com");
+
+// partOfSeries lets crawlers group episode pages back under the one show.
+const schema = {
+	"@context": "https://schema.org",
+	"@type": "PodcastEpisode",
+	name: data.title as string,
+	description: data.description as string,
+	datePublished: data.pubDate as string,
+	url: new URL(`/episodes/${slugFor(entry)}/`, site).href,
+	episodeNumber: episodeNumberFor(entry),
+	partOfSeries: {
+		"@type": "PodcastSeries",
+		name: "Stuck Between Pixels",
+		url: site.href,
+		webFeed: new URL("/rss.xml", site).href,
+	},
+	...(audioUrl
+		? { associatedMedia: { "@type": "AudioObject", contentUrl: audioUrl } }
+		: {}),
+};
+---
+
+<Layout
+  title={`${data.title} — Stuck Between Pixels`}
+  description={data.description as string}
+  ogType="article"
+  image={hasArtworkFor(entry) ? artworkFor(entry) : undefined}
+  schema={schema}
+>
+  <article class="mx-auto max-w-2xl px-4 py-16 md:px-8">
+    <p class="eyebrow text-fg-muted">
+      {formatDate(data.pubDate)}
+      {duration && <span> &middot; {duration}</span>}
+    </p>
+    <h1 class="mt-2 font-display text-3xl font-medium md:text-4xl">{data.title as string}</h1>
+
+    <div class="mt-6">
+      <Player audioUrl={audioUrl} />
+      {
+        audioUrl && (
+          <button
+            type="button"
+            data-play-episode
+            data-episode-id={entry.id}
+            data-title={data.title as string}
+            data-audio-url={audioUrl}
+            class="eyebrow mt-3 inline-flex items-center gap-2 rounded-full border border-border px-4 py-2 text-fg-muted transition-colors hover:border-accent hover:text-accent"
+          >
+            <svg class="size-4" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+              <path d="M8 5v14l11-7Z" />
+            </svg>
+            Play in sticky player
+          </button>
+        )
+      }
+    </div>
+
+    <p class="mt-8 whitespace-pre-line text-fg-muted">
+      {data.description as string}
+    </p>
+
+    <div class="mt-12 border-t border-border pt-8">
+      <p class="eyebrow text-fg-muted">Hosted by</p>
+      <div class="mt-4">
+        <HostStrip />
+      </div>
+    </div>
+
+    <a href="/episodes" class="mt-8 inline-block text-brand hover:underline">
+      &larr; All episodes
+    </a>
+  </article>
+</Layout>

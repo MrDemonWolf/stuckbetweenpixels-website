@@ -1,0 +1,82 @@
+---
+import type { CollectionEntry } from "astro:content";
+import LogoMark from "../assets/brand/logo-mark.svg";
+import {
+	artworkFor,
+	audioUrlFor,
+	durationFor,
+	episodeNumberFor,
+	formatDate,
+	hasArtworkFor,
+	slugFor,
+} from "../lib/episodes";
+
+interface Props {
+	entry: CollectionEntry<"episodes">;
+	index?: number;
+}
+
+const { entry, index } = Astro.props;
+const data = entry.data as Record<string, unknown>;
+const duration = durationFor(entry);
+const number = episodeNumberFor(entry) ?? index;
+const audioUrl = audioUrlFor(entry);
+const hasArtwork = hasArtworkFor(entry);
+---
+
+<div
+  class="group grid grid-cols-[3.5rem_1fr] items-center gap-4 border-b border-border py-6 first:pt-0 md:grid-cols-[5rem_1fr]"
+>
+  <span class="font-mono text-sm text-fg-muted">
+    {number ? `EP.${String(number).padStart(2, "0")}` : "EP."}
+  </span>
+
+  <div class="flex items-center gap-4">
+    <div class="relative hidden shrink-0 sm:block">
+      {
+        hasArtwork ? (
+          <img
+            src={artworkFor(entry)}
+            alt=""
+            width="64"
+            height="64"
+            class="size-16 rounded-xl border border-border object-cover"
+          />
+        ) : (
+          <div class="grid size-16 place-items-center rounded-xl border border-border bg-surface">
+            <img src={LogoMark.src} alt="" class="w-2/5" />
+          </div>
+        )
+      }
+      {
+        audioUrl && (
+          <button
+            type="button"
+            data-play-episode
+            data-episode-id={entry.id}
+            data-title={data.title as string}
+            data-audio-url={audioUrl}
+            data-artwork={artworkFor(entry)}
+            aria-label={`Play ${data.title as string}`}
+            class="absolute inset-0 grid place-items-center rounded-xl bg-bg/60 text-fg opacity-0 transition-opacity group-hover:opacity-100"
+          >
+            <svg class="size-6" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+              <path d="M8 5v14l11-7Z" />
+            </svg>
+          </button>
+        )
+      }
+    </div>
+
+    <a href={`/episodes/${slugFor(entry)}`} class="min-w-0">
+      <h3 class="font-display text-xl transition-colors group-hover:text-brand md:text-2xl">
+        {data.title as string}
+      </h3>
+      <p class="eyebrow mt-2 text-fg-muted">
+        {formatDate(data.pubDate)}
+        {duration && <span> &middot; {duration}</span>}
+      </p>
+      <p class="mt-2 line-clamp-2 max-w-2xl text-fg-muted">{data.description as string}</p>
+    </a>
+  </div>
+</div>

@@ -1,0 +1,79 @@
+---
+import { Image } from "astro:assets";
+import hosts from "../assets/brand/hero-podcast-hosts.png";
+import { hosts as hostData } from "../data/hosts";
+import SubscribeRow from "./SubscribeRow.astro";
+---
+
+<section class="relative overflow-hidden border-b border-border">
+  <div
+    class="mx-auto grid max-w-5xl items-center gap-10 px-4 py-16 md:grid-cols-[1.1fr_1fr] md:gap-6 md:px-8 md:py-24"
+  >
+    <div class="relative z-10 animate-hero-rise motion-reduce:animate-none">
+      <p class="eyebrow text-accent">Web dev &middot; DevOps &middot; business</p>
+      <h1 class="mt-4 font-display text-4xl leading-[1.05] font-medium tracking-tight md:text-6xl">
+        Code, business,
+        <span class="relative inline-block italic">
+          &amp; the network.
+          <svg
+            class="absolute -bottom-1 left-0 w-full text-accent"
+            height="10"
+            viewBox="0 0 300 10"
+            preserveAspectRatio="none"
+            aria-hidden="true"
+          >
+            <path d="M2 7 Q 75 1 150 6 T 298 5" fill="none" stroke="currentColor" stroke-width="3" />
+          </svg>
+        </span>
+      </h1>
+      <p class="mt-6 max-w-md text-lg text-fg-muted">
+        Nathanial Henniges and Stephan Moerman talk with industry experts about
+        web development, DevOps, and the business skills that actually move a
+        tech career forward.
+      </p>
+
+      <div class="mt-8 flex flex-wrap items-center gap-4">
+        <a
+          href="/episodes"
+          class="eyebrow inline-flex items-center gap-2 rounded-full bg-brand px-5 py-2.5 text-bg transition-opacity hover:opacity-90"
+        >
+          <svg class="size-4" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+            <path d="M8 5v14l11-7Z" />
+          </svg>
+          Start listening
+        </a>
+        <a href="/about" class="flex items-center -space-x-2">
+          {
+            hostData.map((host) => (
+              <Image
+                src={host.photo}
+                alt={host.name}
+                width={32}
+                height={32}
+                class="size-8 rounded-full border-2 border-bg object-cover"
+              />
+            ))
+          }
+          <span class="eyebrow ml-4 text-fg-muted">Meet the hosts</span>
+        </a>
+      </div>
+
+      <div class="mt-8 border-t border-border pt-6">
+        <SubscribeRow />
+      </div>
+    </div>
+
+    <div
+      class="relative animate-hero-rise motion-reduce:animate-none"
+      style="animation-delay: 120ms"
+    >
+      <div class="absolute -inset-6 -z-10 rounded-[2rem] bg-brand-strong md:-inset-10"></div>
+      <Image
+        src={hosts}
+        alt="The Stuck Between Pixels hosts recording an episode"
+        width={640}
+        class="w-full rounded-2xl"
+      />
+    </div>
+  </div>
+</section>

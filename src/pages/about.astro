@@ -1,0 +1,46 @@
+---
+import { Image } from "astro:assets";
+import { hosts } from "../data/hosts";
+import Layout from "../layouts/Layout.astro";
+---
+
+<Layout title="About — Stuck Between Pixels">
+  <section class="mx-auto max-w-5xl px-4 py-16 md:px-8">
+    <h1 class="font-display text-4xl font-medium">About the show</h1>
+    <p class="mt-4 max-w-xl text-lg text-fg-muted">
+      Stuck Between Pixels explores the dynamic world of technology, with a focus on
+      web development, DevOps, business development, and professional networking.
+      Each episode features conversations with industry experts, covering current
+      trends and best practices &mdash; CI/CD, cloud computing, product management,
+      marketing, and building the kind of professional network that actually helps
+      you grow. Whether you're a developer, tech enthusiast, or entrepreneur, it's
+      built to help you excel and make meaningful connections in the digital world.
+    </p>
+
+    <div class="mt-12 grid gap-8 md:grid-cols-2">
+      {
+        hosts.map((host) => (
+          <div id={host.slug} class="scroll-mt-20 rounded-2xl border border-border bg-surface p-6">
+            <Image
+              src={host.photo}
+              alt={host.name}
+              width={96}
+              height={96}
+              class="h-24 w-24 rounded-full object-cover"
+            />
+            <h2 class="mt-4 font-display text-xl font-medium">{host.name}</h2>
+            <p class="eyebrow text-fg-muted">{host.role}</p>
+            <p class="mt-3 text-fg-muted">{host.bio}</p>
+            <div class="mt-3 flex gap-4">
+              {host.links.map((link) => (
+                <a href={link.href} class="text-sm text-brand hover:underline">
+                  {link.label}
+                </a>
+              ))}
+            </div>
+          </div>
+        ))
+      }
+    </div>
+  </section>
+</Layout>

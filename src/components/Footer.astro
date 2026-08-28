@@ -1,0 +1,16 @@
+---
+import SubscribeRow from "./SubscribeRow.astro";
+
+const year = new Date().getFullYear();
+---
+
+<footer class="mt-16 border-t border-border">
+  <div class="mx-auto flex max-w-5xl flex-col gap-4 px-4 py-10 md:flex-row md:items-center md:justify-between md:px-8">
+    <SubscribeRow />
+    <div class="eyebrow flex flex-col gap-2 text-fg-muted md:flex-row md:items-center md:gap-4">
+      <p>&copy; {year} Stuck Between Pixels</p>
+      <a href="/legal" class="hover:text-accent">Privacy</a>
+      <a href="/terms" class="hover:text-accent">Terms</a>
+    </div>
+  </div>
+</footer>

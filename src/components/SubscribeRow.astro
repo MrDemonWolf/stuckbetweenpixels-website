@@ -1,0 +1,45 @@
+---
+// ponytail: real Apple/Spotify show URLs go here once the show is live on both.
+const links = [
+	{
+		label: "Spotify",
+		href: import.meta.env.PODCAST_SPOTIFY_URL || "https://open.spotify.com",
+		icon: "spotify",
+	},
+	{
+		label: "Apple Podcasts",
+		href: import.meta.env.PODCAST_APPLE_URL || "https://podcasts.apple.com",
+		icon: "apple",
+	},
+	{ label: "RSS", href: "/rss.xml", icon: "rss" },
+] as const;
+---
+
+<div class="flex flex-wrap gap-3">
+  {
+    links.map((link) => (
+      <a
+        href={link.href}
+        class="eyebrow inline-flex items-center gap-2 rounded-full border border-border px-4 py-2 text-fg transition-colors hover:border-accent hover:text-accent"
+      >
+        {link.icon === "spotify" && (
+          <svg class="size-4" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+            <path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20Zm4.59 14.42a.62.62 0 0 1-.86.21c-2.36-1.44-5.33-1.77-8.84-.97a.62.62 0 1 1-.28-1.22c3.84-.88 7.14-.5 9.77 1.11.3.19.4.58.21.87Zm1.22-2.72a.78.78 0 0 1-1.07.26c-2.7-1.66-6.82-2.14-10.02-1.17a.78.78 0 1 1-.45-1.49c3.65-1.11 8.19-.57 11.28 1.33.37.23.5.72.26 1.07Zm.1-2.83c-3.24-1.92-8.6-2.1-11.7-1.16a.94.94 0 1 1-.55-1.79c3.56-1.08 9.47-.87 13.2 1.35a.94.94 0 0 1-.95 1.6Z" />
+          </svg>
+        )}
+        {link.icon === "apple" && (
+          <svg class="size-4" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+            <path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20Zm0 4.2a3.6 3.6 0 0 1 3.6 3.6c0 1.5-.9 2.4-1.6 3.2-.6.7-1.1 1.3-1.1 2.3v.5h-1.8v-.5c0-1.5.8-2.4 1.5-3.2.6-.7 1.2-1.3 1.2-2.3a1.8 1.8 0 1 0-3.6 0H8.4A3.6 3.6 0 0 1 12 6.2Zm-.9 11.1h1.8V19h-1.8Z" />
+          </svg>
+        )}
+        {link.icon === "rss" && (
+          <svg class="size-4" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+            <circle cx="5.5" cy="18.5" r="2" />
+            <path d="M4 10a10 10 0 0 1 10 10h-2.5A7.5 7.5 0 0 0 4 12.5Zm0-5.5a15.5 15.5 0 0 1 15.5 15.5H17A13 13 0 0 0 4 7Z" />
+          </svg>
+        )}
+        {link.label}
+      </a>
+    ))
+  }
+</div>

@@ -1,0 +1,86 @@
+---
+// Live preview of DESIGN.md's tokens. Excluded from the sitemap in astro.config.mjs.
+import EpisodeCard from "../components/EpisodeCard.astro";
+import FeaturedEpisode from "../components/FeaturedEpisode.astro";
+import HostStrip from "../components/HostStrip.astro";
+import Player from "../components/Player.astro";
+import SubscribeRow from "../components/SubscribeRow.astro";
+import Layout from "../layouts/Layout.astro";
+
+const colors = [
+	["--color-bg", "Background"],
+	["--color-surface", "Surface"],
+	["--color-border", "Border"],
+	["--color-fg", "Foreground"],
+	["--color-fg-muted", "Foreground muted"],
+	["--color-brand", "Brand"],
+	["--color-brand-strong", "Brand strong (fill only)"],
+	["--color-on-brand", "On-brand text"],
+	["--color-accent", "Accent"],
+	["--color-danger", "Danger"],
+];
+
+const sampleEpisode = {
+	id: "design-system-preview",
+	data: {
+		title: "A sample episode title for preview",
+		pubDate: "2026-08-01T00:00:00.000Z",
+		description: "This card is a token preview, not a real episode.",
+		itunes: { duration: "30:00" },
+	},
+} as any;
+---
+
+<Layout title="Design system — Stuck Between Pixels" noindex>
+  <section class="mx-auto max-w-4xl px-4 py-16 md:px-6">
+    <h1 class="font-display text-3xl">Design system</h1>
+    <p class="mt-2 text-fg-muted">Live render of DESIGN.md's tokens.</p>
+
+    <h2 class="mt-12 font-display text-xl">Color</h2>
+    <div class="mt-4 grid grid-cols-2 gap-4 sm:grid-cols-5">
+      {
+        colors.map(([token, label]) => (
+          <div>
+            <div
+              class="h-16 rounded-lg border border-border"
+              style={`background-color: var(${token})`}
+            />
+            <p class="mt-1 text-xs text-fg-muted">{label}</p>
+            <code class="text-xs">{token}</code>
+          </div>
+        ))
+      }
+    </div>
+
+    <h2 class="mt-12 font-display text-xl font-medium">Type</h2>
+    <div class="mt-4 space-y-2">
+      <p class="font-display text-3xl font-medium">Display 3xl / Fraunces</p>
+      <p class="font-display text-2xl italic">Display 2xl italic</p>
+      <p class="eyebrow text-fg-muted">Eyebrow / IBM Plex Mono</p>
+      <p class="text-base">Body base / Work Sans</p>
+      <p class="text-sm text-fg-muted">Body sm muted</p>
+    </div>
+
+    <h2 class="mt-12 font-display text-xl">Components</h2>
+    <div class="mt-4 grid gap-6 md:grid-cols-2">
+      <EpisodeCard entry={sampleEpisode} />
+      <Player />
+    </div>
+    <div class="mt-6">
+      <SubscribeRow />
+    </div>
+    <div class="mt-6">
+      <HostStrip />
+    </div>
+    <div class="mt-6 rounded-2xl border border-border">
+      <FeaturedEpisode entry={sampleEpisode} />
+    </div>
+
+    <h2 class="mt-12 font-display text-xl">Theme toggle</h2>
+    <p class="mt-2 text-sm text-fg-muted">
+      Use the sun/moon button in the header above to flip data-theme and confirm
+      every swatch and component here flips with it — no flash, no invisible
+      logo. Header component: src/components/Header.astro.
+    </p>
+  </section>
+</Layout>
