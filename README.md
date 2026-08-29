@@ -114,14 +114,19 @@ builds (to fail fast on a broken commit), and runs the nightly rebuild.
 
 ### Nightly rebuild
 
-Cloudflare's Git integration builds on push, not on a schedule, but the site
-needs a daily rebuild so a newly published episode appears without anyone
-pushing. The `nightly` job in `ci.yml` POSTs a **Pages deploy hook** once a day.
+Cloudflare's Git integration builds on push, not on a schedule. Once the site
+reads from the real RSS feed it will need a daily rebuild, so a newly published
+episode appears without anyone pushing.
 
-Create the hook in the Pages project (Settings → Builds → Add deploy hook,
-branch `main`) and store its URL as the GitHub secret
-`CLOUDFLARE_DEPLOY_HOOK`. Trigger it by hand with "Run workflow" on the CI
-workflow.
+**This is not set up yet, deliberately.** While `PODCAST_RSS_URL` is unset the
+episode list comes from a checked-in JSON file, so a nightly rebuild would
+regenerate identical output and spend build minutes for nothing. The `nightly`
+job in `ci.yml` no-ops until the secret exists.
+
+Turn it on at the same time you point the site at the real feed: create a deploy
+hook in the Pages project (Settings → Builds → Add deploy hook, branch `main`)
+and store its URL as the GitHub secret `CLOUDFLARE_DEPLOY_HOOK`. Trigger it by
+hand with "Run workflow" on the CI workflow.
 
 ### Build settings
 

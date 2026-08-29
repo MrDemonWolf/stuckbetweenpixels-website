@@ -44,6 +44,11 @@ jobs:
 
       - run: bun run build
 
+  # Only needed once PODCAST_RSS_URL is set. Until then the episode list comes
+  # from a checked-in JSON file, so a nightly rebuild would regenerate identical
+  # output and spend build minutes for nothing. Create the Pages deploy hook and
+  # set CLOUDFLARE_DEPLOY_HOOK at the same time you point the site at the real
+  # feed; until then this job no-ops rather than failing every night.
   nightly:
     if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
@@ -53,7 +58,7 @@ jobs:
           DEPLOY_HOOK: ${{ secrets.CLOUDFLARE_DEPLOY_HOOK }}
         run: |
           if [ -z "$DEPLOY_HOOK" ]; then
-            echo "CLOUDFLARE_DEPLOY_HOOK is not set — skipping." >&2
-            exit 1
+            echo "CLOUDFLARE_DEPLOY_HOOK not set — nothing to rebuild yet. Skipping."
+            exit 0
           fi
           curl --fail --silent --show-error -X POST "$DEPLOY_HOOK"
