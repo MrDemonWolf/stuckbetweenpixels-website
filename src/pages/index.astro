@@ -20,7 +20,7 @@ const recent = rest.slice(0, 3);
 const startHere = startHereFor(episodes);
 const showStartHere = startHere && startHere.id !== latest?.id;
 
-const site = Astro.site ?? new URL("https://stuckbetweenpixels.com");
+const site = Astro.site ?? new URL("https://www.stuckbetweenpixels.com");
 
 // PodcastSeries on the homepage ties the scattered episode pages into one show
 // entity for search engines — directories read RSS, crawlers read this.

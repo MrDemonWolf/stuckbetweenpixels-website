@@ -151,11 +151,16 @@ with the real domain in search, and sets immutable caching on `/_astro/*`.
 
 ### Domains
 
-The **apex** `stuckbetweenpixels.com` is canonical — it is what `site` in
+`www.stuckbetweenpixels.com` is canonical. That is what `site` in
 `astro.config.mjs` declares, and therefore what every canonical tag, OG URL and
-the sitemap use. `www` is added as a second custom domain and redirects to the
-apex. The zone is already on Cloudflare, so adding the custom domains in the
-Pages project sets the DNS records for you.
+the sitemap use. It also matches the Google Analytics data stream URL. The apex
+`stuckbetweenpixels.com` is a second custom domain and redirects to `www` with a
+Cloudflare Bulk Redirect. The zone is already on Cloudflare, so adding the custom
+domains in the Pages project sets the DNS records for you.
+
+Both hostnames must stay attached to the Pages project: a custom domain is what
+terminates TLS, so removing the apex would break the redirect with a certificate
+error before it ever issues a 301.
 
 There is no `base` path and no `public/CNAME`; both were GitHub Pages
 workarounds and are gone.
