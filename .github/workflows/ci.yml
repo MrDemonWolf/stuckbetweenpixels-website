@@ -1,0 +1,59 @@
+name: CI
+
+# Cloudflare Pages builds and deploys this site from its own Git integration,
+# so nothing here publishes. This workflow exists to fail fast on a broken
+# build, and to trigger the nightly rebuild that picks up new podcast episodes
+# from the RSS feed. See "Deploy" in README.md.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  schedule:
+    # Daily rebuild so a newly published episode appears without a manual push.
+    - cron: "0 13 * * *"
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  check:
+    # The nightly run only needs to poke the deploy hook, not rebuild here.
+    if: github.event_name != 'schedule'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - uses: actions/setup-node@v4
+        with:
+          # Astro 7 requires >=22.12.
+          node-version: 22
+
+      - run: bun install --frozen-lockfile
+
+      - run: bun run check-types
+
+      - run: bun run build
+
+  nightly:
+    if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger Cloudflare Pages rebuild
+        env:
+          DEPLOY_HOOK: ${{ secrets.CLOUDFLARE_DEPLOY_HOOK }}
+        run: |
+          if [ -z "$DEPLOY_HOOK" ]; then
+            echo "CLOUDFLARE_DEPLOY_HOOK is not set — skipping." >&2
+            exit 1
+          fi
+          curl --fail --silent --show-error -X POST "$DEPLOY_HOOK"

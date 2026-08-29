@@ -22,3 +22,6 @@ pnpm-debug.log*
 
 # jetbrains setting folder
 .idea/
+
+# brand asset export for Drive, regenerate as needed
+assets.zip

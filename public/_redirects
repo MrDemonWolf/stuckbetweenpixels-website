@@ -1,0 +1,3 @@
+# Cloudflare Pages redirects. Served natively; this file is not published as an asset.
+# Real 301s, unlike Astro's static `redirects` which emit a meta-refresh HTML page.
+/privacy    /legal    301

@@ -1,0 +1,11 @@
+# Cloudflare Pages headers. Served natively; this file is not published as an asset.
+
+# Preview deployments are public URLs serving a full copy of the site. Without
+# this they compete with the real domain in search results.
+https://:project.pages.dev/*
+  X-Robots-Tag: noindex
+
+# Fingerprinted build output can be cached hard — the filename changes when the
+# content does.
+/_astro/*
+  Cache-Control: public, max-age=31536000, immutable

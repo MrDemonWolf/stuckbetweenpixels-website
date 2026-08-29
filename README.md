@@ -2,7 +2,7 @@
 
 Official website for the [Stuck Between Pixels](https://stuckbetweenpixels.com)
 podcast. Static Astro site, episodes pulled from the Spotify for Creators RSS
-feed at build time. Deployed to GitHub Pages.
+feed at build time. Deployed to Cloudflare Pages.
 
 See `DESIGN.md` for the design system, and `/design-system` (in dev or a
 deployed build) for a live token preview.
@@ -69,7 +69,8 @@ The collection then loads `src/data/episodes.empty.json`, and the homepage and
 `/episodes` both fall back to the `ComingSoon` block. Setting `PODCAST_RSS_URL`
 overrides this entirely: the real feed always wins.
 
-Set `SHOW_DEMO_EPISODES` as a repo variable to control what deploys.
+Set `SHOW_DEMO_EPISODES` as a Cloudflare Pages build environment variable to
+control what deploys.
 
 ## Apple Podcasts badge
 
@@ -94,10 +95,9 @@ Once the show is live on Spotify for Creators:
 
 1. Copy `.env.example` to `.env`, set `PODCAST_RSS_URL` to the show's RSS URL
    (Spotify for Creators → Settings → Distribution → RSS feed).
-2. Set the same value as a **repo variable** (Settings → Secrets and
-   variables → Actions → Variables) named `PODCAST_RSS_URL` — the deploy
-   workflow reads it from there. It's a variable, not a secret: the feed is
-   public.
+2. Set the same value as a build environment variable named
+   `PODCAST_RSS_URL` in the Cloudflare Pages project (Settings → Environment
+   variables). That is where the build reads it from.
 3. Optionally set `PODCAST_SPOTIFY_URL` / `PODCAST_APPLE_URL` for the
    subscribe links, the same way.
 4. Optionally set `PUBLIC_GA_ID` (a Google Analytics measurement ID) to load
@@ -105,43 +105,52 @@ Once the show is live on Spotify for Creators:
 
 ## Deploy
 
-Push to `main` → `.github/workflows/deploy.yml` builds and deploys via GitHub
-Pages. Also runs daily (cron) so a new episode shows up without a manual push,
-and can be triggered manually from the Actions tab.
+Hosted on **Cloudflare Pages** with its Git integration. Every push to `main`
+builds and deploys; every pull request gets its own preview deployment at a
+`*.pages.dev` URL, served from the root path.
 
-Repo Settings → Pages → Source must be **GitHub Actions** (one-time setup).
+There is no deploy step in CI. `.github/workflows/ci.yml` only type-checks and
+builds (to fail fast on a broken commit), and runs the nightly rebuild.
 
-## Preview vs production builds
+### Nightly rebuild
 
-`stuckbetweenpixels.com` still serves the old WordPress site, so deploys
-currently go to the GitHub Pages **project URL**:
+Cloudflare's Git integration builds on push, not on a schedule, but the site
+needs a daily rebuild so a newly published episode appears without anyone
+pushing. The `nightly` job in `ci.yml` POSTs a **Pages deploy hook** once a day.
 
-<https://mrdemonwolf.github.io/stuckbetweenpixels-website/>
+Create the hook in the Pages project (Settings → Builds → Add deploy hook,
+branch `main`) and store its URL as the GitHub secret
+`CLOUDFLARE_DEPLOY_HOOK`. Trigger it by hand with "Run workflow" on the CI
+workflow.
 
-That build sets `PREVIEW_DEPLOY=1`, which switches `astro.config.mjs` to a
-`base` of `/stuckbetweenpixels-website` and drops `public/CNAME` so GitHub
-doesn't claim the production domain. Every internal link goes through
-`url()` in `src/lib/url.ts` so both modes work — use it for any new
-hardcoded `/path` link or `public/` asset reference.
+### Build settings
 
-Build either mode locally:
+| Setting | Value |
+|---|---|
+| Build command | `bun run build` |
+| Output directory | `dist` |
+| Production branch | `main` |
 
-```bash
-bun run build                    # production (stuckbetweenpixels.com)
-PREVIEW_DEPLOY=1 bun run build   # project-URL preview
-```
+**Build environment variables live in the Cloudflare Pages dashboard**, not in
+GitHub. Set `NODE_VERSION=22` (Astro 7 requires >=22.12), plus whichever of
+`PODCAST_RSS_URL`, `PODCAST_SPOTIFY_URL`, `PODCAST_APPLE_URL`, `PUBLIC_GA_ID`
+and `SHOW_DEMO_EPISODES` apply. Missing them doesn't fail the build; the site
+just quietly loses analytics or falls back to sample episodes.
 
-## Custom domain cutover
+### Redirects and headers
 
-`public/CNAME` already points at `stuckbetweenpixels.com`. To go live:
+`public/_redirects` and `public/_headers` are Cloudflare Pages features, copied
+verbatim into `dist/` at build time. `_redirects` holds the `/privacy` → `/legal`
+301; `_headers` marks `*.pages.dev` previews `noindex` so they don't compete
+with the real domain in search, and sets immutable caching on `/_astro/*`.
 
-0. Set `PREVIEW_DEPLOY: "0"` in `.github/workflows/deploy.yml` — that restores
-   the production `site`, drops the `base`, and stops the workflow deleting
-   `public/CNAME`.
-1. DNS (apex `A` records) → `185.199.108.153`, `185.199.109.153`,
-   `185.199.110.153`, `185.199.111.153`
-   (`AAAA` → `2606:50c0:8000::153` … `2606:50c0:8003::153`)
-2. `www` → `CNAME` → `<github-username>.github.io`
-3. If DNS is on Cloudflare: set those records to **DNS only** (grey cloud)
-   until GitHub issues the certificate, then you can re-enable the proxy.
-4. Old WordPress site can come down once this is verified live.
+### Domains
+
+The **apex** `stuckbetweenpixels.com` is canonical — it is what `site` in
+`astro.config.mjs` declares, and therefore what every canonical tag, OG URL and
+the sitemap use. `www` is added as a second custom domain and redirects to the
+apex. The zone is already on Cloudflare, so adding the custom domains in the
+Pages project sets the DNS records for you.
+
+There is no `base` path and no `public/CNAME`; both were GitHub Pages
+workarounds and are gone.
