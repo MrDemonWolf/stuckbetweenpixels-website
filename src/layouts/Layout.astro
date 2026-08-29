@@ -2,6 +2,7 @@
 import { ClientRouter } from "astro:transitions";
 import "../styles/global.css";
 import socialShare from "../assets/brand/default-social-share.jpg";
+import ConsentBanner from "../components/ConsentBanner.astro";
 import Footer from "../components/Footer.astro";
 import Header from "../components/Header.astro";
 import StickyPlayer from "../components/StickyPlayer.astro";
@@ -23,7 +24,7 @@ const SITE_NAME = "Stuck Between Pixels";
 
 const {
 	title = SITE_NAME,
-	description = "A podcast about web development, DevOps, business development, and professional networking in tech.",
+	description = "A podcast about web development, DevOps, AI, business development, and professional networking in tech.",
 	image = socialShare.src,
 	ogType = "website",
 	noindex = false,
@@ -74,8 +75,13 @@ import { url } from "../lib/url";
     <ClientRouter />
     {/* No-flash theme resolve — must run before first paint. Explicit choice
        (sbp-theme) wins; otherwise follow the OS. Kept in sync with the toggle
-       in ThemeToggle.astro and the --sbp-* tokens in global.css. */}
-    <script is:inline>
+       in ThemeToggle.astro and the --sbp-* tokens in global.css.
+
+       data-cfasync="false" opts this out of Cloudflare Rocket Loader, which is
+       enabled on the zone and defers scripts until after render. Deferring this
+       one reintroduces exactly the flash-of-wrong-theme it exists to prevent,
+       and delays the `.js` class that arms `.js .reveal`. */}
+    <script is:inline data-cfasync="false">
       (() => {
         const stored = localStorage.getItem("sbp-theme");
         const theme =
@@ -86,19 +92,34 @@ import { url } from "../lib/url";
         document.documentElement.classList.add("js");
       })();
     </script>
+    {/* Analytics is consent-gated: gtag.js is NOT requested until the visitor
+       accepts. Loading it first and asking afterwards would already have set
+       cookies, which is the thing consent is supposed to prevent. The banner in
+       ConsentBanner.astro calls window.sbpLoadAnalytics() on accept. */}
     {
       gaId && (
-        <>
-          <script is:inline async src={`https://www.googletagmanager.com/gtag/js?id=${gaId}`} />
-          <script is:inline define:vars={{ gaId }}>
+        <script is:inline data-cfasync="false" define:vars={{ gaId }}>
+          window.sbpLoadAnalytics = () => {
+            if (window.sbpAnalyticsLoaded) return;
+            window.sbpAnalyticsLoaded = true;
+
+            const s = document.createElement("script");
+            s.async = true;
+            s.src = "https://www.googletagmanager.com/gtag/js?id=" + gaId;
+            document.head.appendChild(s);
+
             window.dataLayer = window.dataLayer || [];
-            function gtag() {
-              dataLayer.push(arguments);
-            }
-            gtag("js", new Date());
-            gtag("config", gaId);
-          </script>
-        </>
+            window.gtag = function () {
+              window.dataLayer.push(arguments);
+            };
+            window.gtag("js", new Date());
+            window.gtag("config", gaId);
+          };
+
+          if (localStorage.getItem("sbp-consent") === "granted") {
+            window.sbpLoadAnalytics();
+          }
+        </script>
       )
     }
   </head>
@@ -113,6 +134,7 @@ import { url } from "../lib/url";
     {/* transition:persist lives on the root div inside StickyPlayer — see the
        note there for why it can't go on the component. */}
     <StickyPlayer />
+    {gaId && <ConsentBanner />}
 
     <script>
       // Scroll reveal. `.reveal` starts hidden in CSS, so if this never runs the

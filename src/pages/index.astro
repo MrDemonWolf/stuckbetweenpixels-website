@@ -29,7 +29,7 @@ const schema = {
 	"@type": "PodcastSeries",
 	name: "Stuck Between Pixels",
 	description:
-		"A podcast about web development, DevOps, business development, and professional networking in tech.",
+		"A podcast about web development, DevOps, AI, business development, and professional networking in tech.",
 	url: site.href,
 	webFeed: new URL("/rss.xml", site).href,
 	author: hosts.map((host) => ({ "@type": "Person", name: host.name })),
@@ -37,8 +37,8 @@ const schema = {
 ---
 
 <Layout
-  title="Stuck Between Pixels — Web Dev, DevOps & Business Podcast"
-  description="Nathanial Henniges and Stephan Moerman talk with industry experts about web development, DevOps, and the business skills that actually move a tech career forward. New episodes every other week."
+  title="Stuck Between Pixels — Web Dev, DevOps, AI & Business Podcast"
+  description="Nathanial Henniges and Stephan Moerman talk with industry experts about web development, DevOps, AI, and the business skills that actually move a tech career forward. New episodes every other week."
   schema={schema}
 >
   <Hero entries={episodes} />

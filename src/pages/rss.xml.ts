@@ -12,7 +12,7 @@ export async function GET(context: APIContext) {
 	return rss({
 		title: "Stuck Between Pixels",
 		description:
-			"A podcast about web development, DevOps, business development, and professional networking in tech.",
+			"A podcast about web development, DevOps, AI, business development, and professional networking in tech.",
 		site: context.site ?? "https://stuckbetweenpixels.com",
 		items: episodes.map((entry) => {
 			const data = entry.data as Record<string, unknown>;
