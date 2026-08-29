@@ -1,5 +1,15 @@
 [
 	{
+		"id": "sample-4",
+		"title": "AI in the Stack: What We Actually Ship With",
+		"pubDate": "2026-08-15T13:00:00.000Z",
+		"description": "Where AI earns its place in a real workflow and where it quietly costs more than it saves. Code review, boilerplate, client expectations, and the parts we still write by hand.",
+		"link": "https://open.spotify.com",
+		"tags": ["AI", "Web Dev"],
+		"enclosure": { "url": "", "type": "audio/mpeg" },
+		"itunes": { "duration": "44:30", "episode": 4 }
+	},
+	{
 		"id": "sample-3",
 		"title": "Why Every Small Business Needs a Website (Not Just a Facebook Page)",
 		"pubDate": "2026-08-01T13:00:00.000Z",

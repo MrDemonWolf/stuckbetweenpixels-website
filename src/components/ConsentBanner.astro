@@ -1,0 +1,90 @@
+---
+import { url } from "../lib/url";
+
+// Cookie consent for Google Analytics. Only rendered when PUBLIC_GA_ID is set —
+// with no analytics there is nothing to consent to, and showing a banner anyway
+// would be theatre.
+//
+// Analytics is blocked until "Accept" is pressed: Layout.astro only defines
+// window.sbpLoadAnalytics() and calls it on page load if consent was already
+// granted. Declining stores that choice so the banner stays gone.
+---
+
+<div
+  id="consent-banner"
+  hidden
+  role="dialog"
+  aria-labelledby="consent-title"
+  aria-describedby="consent-body"
+  class="fixed inset-x-0 bottom-0 z-40 border-t border-border bg-surface/95 backdrop-blur"
+>
+  <div
+    class="mx-auto flex max-w-5xl flex-col gap-4 px-4 py-5 md:flex-row md:items-center md:justify-between md:px-8"
+  >
+    <div class="min-w-0">
+      <p id="consent-title" class="kicker text-ember">Cookies</p>
+      <p id="consent-body" class="mt-2 max-w-2xl text-sm text-fg-muted">
+        We'd like to use Google Analytics to see which episodes people actually
+        listen to. It sets a cookie. Decline and nothing is loaded.
+        <a
+          href={url("/legal")}
+          class="text-ember underline-offset-4 hover:underline">Read the privacy policy</a
+        >.
+      </p>
+    </div>
+
+    <div class="flex shrink-0 flex-wrap gap-3">
+      <button
+        id="consent-decline"
+        type="button"
+        class="kicker inline-flex min-h-11 items-center rounded-full border border-border px-5 text-fg-muted transition-colors hover:border-ember hover:text-ember"
+      >
+        Decline
+      </button>
+      <button
+        id="consent-accept"
+        type="button"
+        class="kicker inline-flex min-h-11 items-center rounded-full bg-ember px-5 text-on-ember transition-opacity hover:opacity-90"
+      >
+        Accept
+      </button>
+    </div>
+  </div>
+</div>
+
+<script>
+  const KEY = "sbp-consent";
+
+  function initConsent() {
+    const banner = document.getElementById("consent-banner") as HTMLElement | null;
+    if (!banner) return;
+
+    // Already decided, either way: never show it again.
+    if (localStorage.getItem(KEY)) return;
+
+    banner.hidden = false;
+
+    function decide(value: "granted" | "denied") {
+      localStorage.setItem(KEY, value);
+      banner!.hidden = true;
+      if (value === "granted") {
+        (window as unknown as { sbpLoadAnalytics?: () => void }).sbpLoadAnalytics?.();
+      }
+    }
+
+    // Bind once per element — astro:page-load also fires on first load, so
+    // without this the handlers stack up one set per navigation.
+    for (const [id, value] of [
+      ["consent-accept", "granted"],
+      ["consent-decline", "denied"],
+    ] as const) {
+      const btn = document.getElementById(id);
+      if (!btn || btn.dataset.consentBound) continue;
+      btn.dataset.consentBound = "1";
+      btn.addEventListener("click", () => decide(value));
+    }
+  }
+
+  initConsent();
+  document.addEventListener("astro:page-load", initConsent);
+</script>
