@@ -13,7 +13,7 @@ import Layout from "../layouts/Layout.astro";
   <section class="border-b border-border">
     <div class="mx-auto max-w-5xl px-4 pt-14 pb-16 md:px-8 md:pt-20">
       <p class="kicker text-ember">About the show</p>
-      <h1 class="display mt-4 max-w-3xl text-4xl text-balance md:text-6xl">
+      <h1 class="display mt-4 max-w-3xl text-3xl text-balance sm:text-4xl md:text-6xl">
         Conversations for people who build things
       </h1>
       <p class="mt-8 max-w-2xl text-lg text-fg-muted">
@@ -71,7 +71,7 @@ import Layout from "../layouts/Layout.astro";
                 {host.links.map((link) => (
                   <a
                     href={link.href}
-                    class="kicker rounded-full border border-border px-4 py-2 text-fg-muted transition-colors hover:border-ember hover:text-ember"
+                    class="kicker inline-flex min-h-11 items-center rounded-full border border-border px-4 text-fg-muted transition-colors hover:border-ember hover:text-ember"
                   >
                     {link.label}
                   </a>

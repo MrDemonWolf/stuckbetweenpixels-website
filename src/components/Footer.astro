@@ -50,10 +50,13 @@ const columns = [
         columns.map((column) => (
           <nav>
             <h2 class="kicker text-fg-muted">{column.title}</h2>
-            <ul class="mt-4 space-y-2">
+            <ul class="mt-2">
               {column.links.map((link) => (
                 <li>
-                  <a href={link.href} class="text-sm text-fg transition-colors hover:text-ember">
+                  <a
+                    href={link.href}
+                    class="flex min-h-11 items-center text-sm text-fg transition-colors hover:text-ember"
+                  >
                     {link.label}
                   </a>
                 </li>
@@ -70,12 +73,12 @@ const columns = [
       <p class="kicker text-fg-muted">
         &copy; {year} Stuck Between Pixels by <a
           href="https://www.mrdemonwolf.com"
-          class="transition-colors hover:text-ember"
+          class="inline-block py-3 transition-colors hover:text-ember"
         >MrDemonWolf, Inc.</a>
       </p>
       <a
         href="mailto:contact@stuckbetweenpixels.com"
-        class="kicker text-fg-muted transition-colors hover:text-ember"
+        class="kicker inline-flex min-h-11 items-center text-fg-muted transition-colors hover:text-ember"
       >
         contact@stuckbetweenpixels.com
       </a>

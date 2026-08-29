@@ -95,7 +95,7 @@ const tags = tagsFor(entry);
             data-title={data.title as string}
             data-audio-url={audioUrl}
             data-artwork={artworkFor(entry)}
-            class="kicker inline-flex items-center gap-2 rounded-full bg-ember px-6 py-3 text-on-ember transition-opacity hover:opacity-90"
+            class="kicker inline-flex min-h-11 items-center gap-2 rounded-full bg-ember px-6 text-on-ember transition-opacity hover:opacity-90"
           >
             <svg class="size-4" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
               <path d="M8 5v14l11-7Z" />
@@ -105,7 +105,7 @@ const tags = tagsFor(entry);
         ) : (
           <a
             href={url(`/episodes/${slugFor(entry)}`)}
-            class="kicker inline-flex items-center gap-2 rounded-full bg-ember px-6 py-3 text-on-ember transition-opacity hover:opacity-90"
+            class="kicker inline-flex min-h-11 items-center gap-2 rounded-full bg-ember px-6 text-on-ember transition-opacity hover:opacity-90"
           >
             Listen
           </a>
@@ -113,7 +113,7 @@ const tags = tagsFor(entry);
       }
       <a
         href={url(`/episodes/${slugFor(entry)}`)}
-        class="kicker text-fg-muted underline-offset-4 transition-colors hover:text-ember hover:underline"
+        class="kicker inline-flex min-h-11 items-center text-fg-muted underline-offset-4 transition-colors hover:text-ember hover:underline"
       >
         Show notes &rarr;
       </a>

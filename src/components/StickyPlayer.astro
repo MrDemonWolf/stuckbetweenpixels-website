@@ -14,66 +14,81 @@
   transition:persist="sticky-player"
   class="fixed inset-x-0 bottom-0 z-20 hidden translate-y-full border-t border-border bg-surface/90 backdrop-blur transition-transform data-[open]:flex data-[open]:translate-y-0"
 >
-  <div class="mx-auto flex w-full max-w-5xl items-center gap-4 px-4 py-3 md:px-8">
-    <img id="sp-artwork" alt="" width="40" height="40" class="size-10 shrink-0 rounded-lg object-cover" />
+  {/* Two rows on phones, one from sm up. Skipping is the control people
+     actually reach for on a phone, so it stays visible rather than being
+     hidden to save space; only the speed control is sm-and-up. */}
+  <div
+    class="mx-auto grid w-full max-w-5xl grid-cols-[auto_1fr_auto] items-center gap-x-3 gap-y-2 px-4 py-3 sm:flex sm:gap-4 md:px-8"
+  >
+    <img id="sp-artwork" alt="" width="44" height="44" class="size-11 shrink-0 rounded-lg object-cover" />
+
+    <p id="sp-title" class="min-w-0 truncate text-sm font-medium sm:hidden">&nbsp;</p>
 
     <button
-      id="sp-toggle"
+      id="sp-close"
       type="button"
-      aria-label="Play"
-      class="grid size-9 shrink-0 place-items-center rounded-full bg-ember text-bg"
+      aria-label="Close player"
+      class="grid size-11 shrink-0 place-items-center text-fg-muted transition-colors hover:text-ember sm:order-last"
     >
-      <svg id="sp-icon-play" class="size-4" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-        <path d="M8 5v14l11-7Z" />
-      </svg>
-      <svg id="sp-icon-pause" class="hidden size-4" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-        <path d="M6 5h4v14H6zM14 5h4v14h-4z" />
-      </svg>
-    </button>
-
-    <button
-      id="sp-back"
-      type="button"
-      aria-label="Back 15 seconds"
-      class="hidden shrink-0 text-fg-muted transition-colors hover:text-ember sm:block"
-    >
-      <span class="kicker">-15</span>
-    </button>
-
-    <div class="min-w-0 flex-1">
-      <p id="sp-title" class="truncate text-sm font-medium">&nbsp;</p>
-      <div class="mt-1 flex items-center gap-2">
-        <span id="sp-elapsed" class="font-mono text-xs text-fg-muted tabular-nums">0:00</span>
-        <div id="sp-scrubber" class="relative h-6 flex-1 cursor-pointer">
-          <div id="sp-bars" class="absolute inset-0 flex items-center gap-px"></div>
-        </div>
-        <span id="sp-duration" class="font-mono text-xs text-fg-muted tabular-nums">0:00</span>
-      </div>
-    </div>
-
-    <button
-      id="sp-forward"
-      type="button"
-      aria-label="Forward 15 seconds"
-      class="hidden shrink-0 text-fg-muted transition-colors hover:text-ember sm:block"
-    >
-      <span class="kicker">+15</span>
-    </button>
-
-    <button
-      id="sp-speed"
-      type="button"
-      aria-label="Playback speed"
-      class="kicker hidden w-10 shrink-0 rounded-full border border-border py-1 text-center text-fg-muted transition-colors hover:border-ember hover:text-ember sm:block"
-    >
-      1&times;
-    </button>
-
-    <button id="sp-close" type="button" aria-label="Close player" class="shrink-0 text-fg-muted hover:text-ember">
-      <svg class="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+      <svg class="size-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
         <path d="M6 6l12 12M18 6L6 18" />
       </svg>
     </button>
+
+    {/* Row 2 on mobile: transport + scrubber, spanning the full width. */}
+    <div class="col-span-3 flex items-center gap-2 sm:contents">
+      <button
+        id="sp-back"
+        type="button"
+        aria-label="Back 15 seconds"
+        class="kicker grid size-11 shrink-0 place-items-center text-fg-muted transition-colors hover:text-ember sm:order-first"
+      >
+        -15
+      </button>
+
+      <button
+        id="sp-toggle"
+        type="button"
+        aria-label="Play"
+        class="grid size-11 shrink-0 place-items-center rounded-full bg-ember text-on-ember"
+      >
+        <svg id="sp-icon-play" class="size-5" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+          <path d="M8 5v14l11-7Z" />
+        </svg>
+        <svg id="sp-icon-pause" class="hidden size-5" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+          <path d="M6 5h4v14H6zM14 5h4v14h-4z" />
+        </svg>
+      </button>
+
+      <button
+        id="sp-forward"
+        type="button"
+        aria-label="Forward 15 seconds"
+        class="kicker grid size-11 shrink-0 place-items-center text-fg-muted transition-colors hover:text-ember"
+      >
+        +15
+      </button>
+
+      <div class="min-w-0 flex-1">
+        <p id="sp-title-lg" class="hidden truncate text-sm font-medium sm:block">&nbsp;</p>
+        <div class="flex items-center gap-2 sm:mt-1">
+          <span id="sp-elapsed" class="font-mono text-xs text-fg-muted tabular-nums">0:00</span>
+          <div id="sp-scrubber" class="relative h-8 flex-1 cursor-pointer sm:h-6">
+            <div id="sp-bars" class="absolute inset-0 flex items-center gap-px"></div>
+          </div>
+          <span id="sp-duration" class="font-mono text-xs text-fg-muted tabular-nums">0:00</span>
+        </div>
+      </div>
+
+      <button
+        id="sp-speed"
+        type="button"
+        aria-label="Playback speed"
+        class="kicker hidden w-11 shrink-0 rounded-full border border-border py-2 text-center text-fg-muted transition-colors hover:border-ember hover:text-ember sm:block"
+      >
+        1&times;
+      </button>
+    </div>
   </div>
 
   <audio id="sp-audio"></audio>
@@ -91,7 +106,10 @@
   const toggle = document.getElementById("sp-toggle") as HTMLButtonElement;
   const iconPlay = document.getElementById("sp-icon-play") as unknown as SVGElement;
   const iconPause = document.getElementById("sp-icon-pause") as unknown as SVGElement;
-  const title = document.getElementById("sp-title") as HTMLParagraphElement;
+  // Two title nodes: the mobile row-1 one and the sm+ one beside the scrubber.
+  const titles = ["sp-title", "sp-title-lg"]
+    .map((id) => document.getElementById(id))
+    .filter((el): el is HTMLParagraphElement => el !== null);
   const artwork = document.getElementById("sp-artwork") as HTMLImageElement;
   const elapsedEl = document.getElementById("sp-elapsed") as HTMLSpanElement;
   const durationEl = document.getElementById("sp-duration") as HTMLSpanElement;
@@ -132,7 +150,7 @@
 
   function load(detail: { id: string; title: string; audioUrl: string; artwork?: string }) {
     currentId = detail.id;
-    title.textContent = detail.title;
+    for (const t of titles) t.textContent = detail.title;
     artwork.src = detail.artwork ?? FALLBACK_ARTWORK;
     audio.src = detail.audioUrl;
     audio.playbackRate = SPEEDS[speedIndex];

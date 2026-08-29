@@ -11,30 +11,147 @@ const links = [
 ];
 ---
 
-<header class="sticky top-0 z-30 border-b border-border bg-bg/85 backdrop-blur">
+<header id="site-header" class="sticky top-0 z-30 border-b border-border bg-bg/85 backdrop-blur">
   <div class="mx-auto flex max-w-5xl items-center justify-between gap-3 px-4 py-4 md:px-8">
-    <a href={url("/")} class="flex shrink-0 items-center gap-2.5">
+    <a href={url("/")} class="-my-2 flex min-h-11 shrink-0 items-center gap-2.5 py-2">
       {/* The mark's linework is ink on paper and bone on charcoal — swap the
          variant rather than letting one of them vanish into the background. */}
       <img src={LogoMark.src} alt="Stuck Between Pixels" class="h-9 w-auto dark:hidden" />
       <img src={LogoMarkDark.src} alt="Stuck Between Pixels" class="hidden h-9 w-auto dark:block" />
-      {/* Hidden on phones: the wordmark, nav, and toggle don't fit together at
-         390px, and it wrapped to three lines. The mark alone carries it. */}
-      <span class="display-tight hidden text-lg whitespace-nowrap sm:inline">
+      {/* The menu frees enough width to keep the wordmark on phones. */}
+      <span class="display-tight text-base whitespace-nowrap sm:text-lg">
         Stuck Between Pixels
       </span>
     </a>
-    <div class="flex items-center gap-4 sm:gap-6">
-      <nav class="kicker flex gap-4 text-fg-muted sm:gap-6">
+
+    <div class="flex items-center gap-1 sm:gap-6">
+      <nav class="kicker hidden gap-4 text-fg-muted sm:flex sm:gap-6">
         {
           links.map((link) => (
-            <a href={url(link.to)} class="transition-colors hover:text-ember">
+            <a href={url(link.to)} class="-my-3 py-3 transition-colors hover:text-ember">
               {link.label}
             </a>
           ))
         }
       </nav>
+
       <ThemeToggle />
+
+      <button
+        id="nav-toggle"
+        type="button"
+        aria-expanded="false"
+        aria-controls="mobile-nav"
+        aria-label="Open menu"
+        class="grid size-11 place-items-center rounded-full text-fg-muted transition-colors hover:text-ember sm:hidden"
+      >
+        <svg
+          id="nav-icon-open"
+          class="size-5"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          aria-hidden="true"
+        >
+          <path d="M4 7h16M4 12h16M4 17h16" />
+        </svg>
+        <svg
+          id="nav-icon-close"
+          class="hidden size-5"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          aria-hidden="true"
+        >
+          <path d="M6 6l12 12M18 6L6 18" />
+        </svg>
+      </button>
     </div>
   </div>
+
+  {/* Disclosure, not a modal: `hidden` keeps it out of the tab order when
+     closed rather than merely invisible. */}
+  <nav
+    id="mobile-nav"
+    hidden
+    class="border-t border-border bg-bg/95 backdrop-blur sm:hidden"
+  >
+    <ul class="mx-auto max-w-5xl px-4 py-2">
+      {
+        links.map((link) => (
+          <li>
+            <a
+              href={url(link.to)}
+              class="kicker flex min-h-11 items-center border-b border-border text-fg-muted transition-colors last:border-b-0 hover:text-ember"
+            >
+              {link.label}
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+  </nav>
 </header>
+
+<script>
+  // Header markup is replaced on every client-side navigation, so element
+  // listeners are re-bound each time. Document-level ones must NOT be, or they
+  // accumulate one set per page visit.
+  let documentListenersBound = false;
+
+  function setNavOpen(open: boolean) {
+    const btn = document.getElementById("nav-toggle");
+    const panel = document.getElementById("mobile-nav");
+    const iconOpen = document.getElementById("nav-icon-open");
+    const iconClose = document.getElementById("nav-icon-close");
+    if (!btn || !panel || !iconOpen || !iconClose) return;
+
+    (panel as HTMLElement).hidden = !open;
+    btn.setAttribute("aria-expanded", String(open));
+    btn.setAttribute("aria-label", open ? "Close menu" : "Open menu");
+    iconOpen.classList.toggle("hidden", open);
+    iconClose.classList.toggle("hidden", !open);
+  }
+
+  function initMobileNav() {
+    const btn = document.getElementById("nav-toggle");
+    const panel = document.getElementById("mobile-nav") as HTMLElement | null;
+    if (!btn || !panel) return;
+
+    // astro:page-load also fires on the FIRST load, so this runs twice there.
+    // Binding twice made the two handlers toggle against each other and the
+    // panel never appeared to open. The flag makes binding idempotent.
+    if (!btn.dataset.navBound) {
+      btn.dataset.navBound = "1";
+      btn.addEventListener("click", () => setNavOpen(panel.hidden));
+    }
+
+    if (documentListenersBound) return;
+    documentListenersBound = true;
+
+    document.addEventListener("keydown", (e) => {
+      const open = !(document.getElementById("mobile-nav") as HTMLElement | null)?.hidden;
+      if (e.key === "Escape" && open) {
+        setNavOpen(false);
+        document.getElementById("nav-toggle")?.focus();
+      }
+    });
+
+    document.addEventListener("click", (e) => {
+      const header = document.getElementById("site-header");
+      const p = document.getElementById("mobile-nav") as HTMLElement | null;
+      if (!header || !p || p.hidden) return;
+      if (!header.contains(e.target as Node)) setNavOpen(false);
+    });
+  }
+
+  initMobileNav();
+  document.addEventListener("astro:page-load", () => {
+    initMobileNav();
+    setNavOpen(false);
+  });
+</script>

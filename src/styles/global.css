@@ -184,7 +184,10 @@ body::before {
 	text-transform: uppercase;
 }
 
-/* The broadcast lower-third face. Only ever used large — it's the whole look. */
+/* The broadcast lower-third face. Only ever used large — it's the whole look.
+   overflow-wrap matters here: at 125% stretch a single long word ("CONVERSATIONS")
+   is wider than a phone viewport and pushed the whole page into horizontal
+   scroll. Breaking is preferable to a scrollbar. */
 .display {
 	font-family: var(--font-display);
 	font-stretch: 125%;
@@ -192,6 +195,7 @@ body::before {
 	line-height: 0.95;
 	letter-spacing: -0.02em;
 	text-transform: uppercase;
+	overflow-wrap: break-word;
 }
 
 /* Slightly narrower, for long headlines that would otherwise wrap badly. */
@@ -201,6 +205,7 @@ body::before {
 	font-weight: 800;
 	line-height: 1;
 	letter-spacing: -0.015em;
+	overflow-wrap: break-word;
 }
 
 .on-air-dot {

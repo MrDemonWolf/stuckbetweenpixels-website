@@ -57,7 +57,7 @@ const numberFor = new Map(episodes.map((e, i) => [e.id, episodes.length - i]));
         id="episode-search"
         type="search"
         placeholder="Search episodes&hellip;"
-        class="min-w-0 flex-1 rounded-full border border-border bg-surface px-4 py-2 text-sm text-fg placeholder:text-fg-muted"
+        class="min-h-11 min-w-0 flex-1 rounded-full border border-border bg-surface px-4 py-2 text-sm text-fg placeholder:text-fg-muted"
       />
 
       {
@@ -67,7 +67,7 @@ const numberFor = new Map(episodes.map((e, i) => [e.id, episodes.length - i]));
               type="button"
               data-tag=""
               aria-pressed="true"
-              class="tag-filter kicker rounded-full border border-ember bg-ember px-3 py-1.5 text-on-ember"
+              class="tag-filter kicker min-h-11 rounded-full border border-ember bg-ember px-4 text-on-ember"
             >
               All
             </button>
@@ -76,7 +76,7 @@ const numberFor = new Map(episodes.map((e, i) => [e.id, episodes.length - i]));
                 type="button"
                 data-tag={tag}
                 aria-pressed="false"
-                class="tag-filter kicker rounded-full border border-border px-3 py-1.5 text-fg-muted transition-colors hover:border-ember hover:text-ember"
+                class="tag-filter kicker min-h-11 rounded-full border border-border px-4 text-fg-muted transition-colors hover:border-ember hover:text-ember"
               >
                 {tag}
               </button>
@@ -88,7 +88,7 @@ const numberFor = new Map(episodes.map((e, i) => [e.id, episodes.length - i]));
       <label class="sr-only" for="episode-sort">Sort episodes</label>
       <select
         id="episode-sort"
-        class="kicker rounded-full border border-border bg-surface px-3 py-2 text-fg-muted"
+        class="kicker min-h-11 rounded-full border border-border bg-surface px-3 text-fg-muted"
       >
         <option value="desc">Newest</option>
         <option value="asc">Oldest</option>
