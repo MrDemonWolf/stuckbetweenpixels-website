@@ -7,7 +7,7 @@ import { defineConfig } from "astro/config";
 export default defineConfig({
 	// Apex is canonical; Cloudflare redirects www to it. Every canonical/OG URL
 	// and the sitemap are derived from this.
-	site: "https://stuckbetweenpixels.com",
+	site: "https://www.stuckbetweenpixels.com",
 	output: "static",
 	// No `base`: Cloudflare Pages serves previews at the root of
 	// <branch>.<project>.pages.dev, so nothing is ever under a subpath.
